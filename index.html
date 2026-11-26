@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b0802">
+<title>La Jarana te llama</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="preload" href="assets/Sardin.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+@font-face{font-family:"Sardin";src:url("assets/Sardin.ttf") format("truetype");font-display:swap}
+/* Layout: pinned full-screen canvas that scrubs the pizza clip with the scroll; brand title anchored bottom-left like a film title card. Single dark look (brand brown). */
+:root{
+  --brown:#1b0802;
+  --brown-2:#2a1006;
+  --lime:#ccff6b;
+  --cream:#fbf3e6;
+  --muted:#c9b8a6;
+  --ember:#ff8a3d;
+  --display:"Sardin","Arial Black","Helvetica Neue",sans-serif;
+  --hh:64px;
+  --body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html{background:var(--brown)}
+body{background:var(--brown);color:var(--cream);font-family:var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--brown)}
+
+/* Header */
+.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;
+  padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:linear-gradient(to bottom,rgba(27,8,2,.75),rgba(27,8,2,0));}
+.brand{display:block;line-height:0}
+.brand img{height:17px;width:auto}
+@media (min-width:760px){.brand img{height:21px}}
+.top{transition:background-color .35s}
+.top.solid{background:rgba(27,8,2,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.nav{display:flex;align-items:center;gap:26px}
+.nav a{color:var(--cream);text-decoration:none;font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;opacity:.85}
+.nav a:hover,.nav a:focus-visible{opacity:1;color:var(--lime)}
+.cta{background:var(--lime);color:var(--brown)!important;opacity:1!important;padding:10px 16px;border-radius:999px;font-weight:700!important;letter-spacing:.14em!important}
+.cta:hover{filter:brightness(1.05)}
+.nav .hide-s{display:none}
+@media (min-width:760px){.nav .hide-s{display:inline}}
+a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+
+/* Hero */
+.hero{position:relative;height:340vh}
+.stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:var(--brown)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#embers{pointer-events:none}
+.grain{position:absolute;inset:-50%;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,rgba(27,8,2,0) 55%,rgba(27,8,2,.75) 100%),linear-gradient(to top,rgba(27,8,2,.85) 0%,rgba(27,8,2,0) 28%)}
+
+.title{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 9vh);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  will-change:transform,opacity}
+.title h1{margin:0;line-height:0}
+.title h1 img{display:block;width:min(92vw,560px);height:auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.45))}
+.title h1 .dot{color:var(--lime)}
+.title h1 .w{display:inline-block;transform:translateY(110%);opacity:0;animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards}
+.title .sub{margin:18px 0 0;font-size:.78rem;font-weight:700;letter-spacing:.42em;text-transform:uppercase;color:var(--lime);opacity:0;animation:fade .8s .45s forwards}
+.title .sub span{color:var(--cream);opacity:.6}
+.mask{display:block;overflow:hidden;padding-bottom:.06em}
+@keyframes rise{to{transform:none;opacity:1}}
+@keyframes fade{to{opacity:1}}
+
+.scroll{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;font-size:.62rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--cream);
+  padding:9px 14px;border:1px solid rgba(251,243,230,.25);border-radius:999px;background:rgba(27,8,2,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:opacity .4s}
+.scroll i{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px)}}
+.bar{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--lime);opacity:.9}
+
+@media (min-width:900px){
+  .title{bottom:10vh;padding-left:max(5vw,env(safe-area-inset-left,0px))}
+  .title h1 img{width:min(52vw,820px)}
+  .scroll{left:auto;right:max(5vw,env(safe-area-inset-right,0px));transform:none}
+}
+
+/* ---------- Carta (parte 2) ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:900px){.wrap{padding-left:max(5vw,env(safe-area-inset-left,0px));padding-right:max(5vw,env(safe-area-inset-right,0px))}}
+.lbl{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.34em;text-transform:uppercase;color:var(--lime)}
+.lbl.dark{color:var(--brown)}
+h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--lime);color:var(--brown);text-decoration:none;font-weight:800;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;padding:15px 22px;border-radius:999px;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(204,255,107,.55)}
+.btn.big{font-size:.95rem;padding:20px 32px}
+
+/* intro */
+.intro{position:relative;padding-top:16vh;overflow:hidden;background:radial-gradient(90% 60% at 80% 30%,rgba(255,138,61,.12),transparent 70%),var(--brown)}
+.intro-in{display:grid;gap:24px;align-items:end}
+.intro h2{font-size:clamp(3rem,13vw,7.4rem);line-height:.9;letter-spacing:-.01em;margin:18px 0 22px;color:var(--cream)}
+.lead{margin:0 0 28px;max-width:44ch;color:var(--muted);font-size:1.05rem;line-height:1.6}
+.intro-m{position:relative;justify-self:end;width:min(62vw,300px);margin-top:-10px}
+.flame{display:block;width:100%;height:auto;overflow:visible}
+.m-intro{animation:sway 4.2s ease-in-out infinite;transform-origin:50% 95%}
+.flame .pupils{transition:transform .25s ease-out}
+.flame.blink .pupils{transform:scaleY(.1)!important;transform-origin:center 164px;transform-box:view-box}
+@keyframes sway{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-8px)}}
+.bubble{position:absolute;left:-14%;top:4%;z-index:1;background:var(--cream);color:var(--brown);font-family:var(--display);font-size:clamp(1rem,4.4vw,1.35rem);line-height:1.05;padding:12px 16px;border-radius:18px 18px 18px 4px;border:3px solid #120502;transform:rotate(-6deg);animation:pop .5s 1.2s both cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:rotate(-6deg) scale(.4);opacity:0}}
+@media (min-width:900px){
+  .intro-in{grid-template-columns:1.35fr 1fr;gap:5vw}
+  .intro-m{width:min(30vw,380px);justify-self:center}
+}
+.marq{margin-top:9vh;background:var(--lime);color:var(--brown);overflow:hidden;transform:rotate(-2deg) scale(1.04);border-block:3px solid #120502}
+.mq{display:flex;width:max-content;align-items:center;gap:28px;padding:14px 0;font-family:var(--display);font-size:clamp(1.6rem,6vw,2.8rem);line-height:1;white-space:nowrap;animation:mq 24s linear infinite}
+.mq i{font-style:normal;font-size:.7em}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* featured */
+.feat{padding-block:16vh 10vh}
+.sec-h{margin-bottom:36px}
+.sec-h h2,.club h2,.order h2{font-size:clamp(2.6rem,10vw,5.6rem);line-height:.92;margin-top:16px;color:var(--cream)}
+.cards{display:grid;grid-auto-flow:column;grid-auto-columns:82%;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));padding-bottom:8px;scrollbar-width:none}
+.cards::-webkit-scrollbar{display:none}
+.card{scroll-snap-align:start;background:var(--brown-2);border:1px solid rgba(251,243,230,.08);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+.ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:#120502}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.card:hover .ph img{transform:scale(1.06)}
+.ph .n{position:absolute;left:14px;top:12px;font-family:var(--display);font-size:1.1rem;color:var(--lime);text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.cb{padding:18px 20px 22px;display:grid;gap:8px}
+.kick{font-size:.66rem;font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:var(--ember)}
+.cb .row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.cb h4{font-size:1.8rem;line-height:1}
+.cb .pr{font-weight:800;color:var(--lime);font-size:1.05rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cb p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5}
+@media (min-width:900px){.cards{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);overflow:visible;margin:0;padding:0}}
+
+/* full menu */
+.menu{position:relative;padding-bottom:12vh}
+.tabs{position:sticky;top:calc(var(--hh) + env(safe-area-inset-top,0px));z-index:10;background:rgba(27,8,2,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(251,243,230,.08)}
+.tabs-in{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;max-width:1180px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px))}
+.tabs-in::-webkit-scrollbar{display:none}
+.tabs a{flex:none;color:var(--cream);text-decoration:none;font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:10px 15px;border-radius:999px;border:1px solid rgba(251,243,230,.18);transition:background-color .25s,color .25s,border-color .25s}
+.tabs a:hover{border-color:var(--lime)}
+.tabs a.on{background:var(--lime);color:var(--brown);border-color:var(--lime)}
+@media (min-width:900px){.tabs-in{padding-inline:5vw;justify-content:flex-start}}
+.cat{padding-top:72px;scroll-margin-top:calc(var(--hh) + 60px + env(safe-area-inset-top,0px))}
+.cat-h{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:baseline;padding-bottom:20px;margin-bottom:6px;border-bottom:2px solid var(--lime)}
+.cat-h .num{font-weight:800;font-size:.8rem;letter-spacing:.2em;color:var(--lime)}
+.cat-h h3{font-size:clamp(2.4rem,9vw,4.4rem);line-height:.95;color:var(--cream)}
+.cat-h p{grid-column:1/-1;margin:10px 0 0;color:var(--muted);font-size:.95rem}
+.list{list-style:none;margin:0;padding:0;display:grid;column-gap:48px}
+.it{padding:18px 0;border-bottom:1px solid rgba(251,243,230,.09)}
+.it .row{display:flex;align-items:baseline;gap:10px}
+.it h4{font-size:1.35rem;line-height:1.1;color:var(--cream)}
+.it .ld{flex:1;min-width:16px;border-bottom:2px dotted rgba(251,243,230,.22);transform:translateY(-4px)}
+.it .pr{font-weight:800;color:var(--lime);white-space:nowrap;font-variant-numeric:tabular-nums}
+.it .ing{margin:6px 0 0;color:var(--muted);font-size:.92rem;line-height:1.5;max-width:52ch}
+.it .al{margin:6px 0 0;font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(201,184,166,.6)}
+.it .al::before{content:"Alérgenos · ";color:rgba(255,138,61,.75)}
+.tag{display:inline-block;vertical-align:middle;margin-left:10px;font-family:var(--body);font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:var(--ember);color:var(--brown);padding:4px 8px;border-radius:999px;transform:translateY(-3px)}
+.it:hover h4{color:var(--lime)}
+.list.chips{display:flex;flex-wrap:wrap;gap:10px;padding-top:18px}
+.list.chips .it{border:1px solid rgba(251,243,230,.18);border-radius:999px;padding:10px 16px}
+.list.chips .row{gap:12px}.list.chips .ld{display:none}.list.chips h4{font-size:1.15rem}.list.chips .pr{display:none}
+.list.chips .al{display:inline;margin:0 0 0 10px}.list.chips .al::before{content:"· "}
+@media (min-width:760px){.list.two{grid-template-columns:1fr 1fr}.list.three{grid-template-columns:1fr 1fr}}
+@media (min-width:1100px){.list.three{grid-template-columns:repeat(3,1fr)}}
+.note{margin:48px 0 0;color:var(--muted);font-size:.85rem;max-width:60ch}
+
+/* club */
+.club{background:var(--lime);color:var(--brown);padding-block:14vh 12vh;position:relative;overflow:hidden;border-radius:36px 36px 0 0}
+.club h2{color:var(--brown)}
+.club-in{display:grid;gap:20px;align-items:center}
+.club-t p{font-size:1.1rem;line-height:1.55;max-width:42ch;margin:18px 0 26px}
+.rate{display:inline-flex;align-items:center;gap:14px;background:var(--brown);color:var(--lime);font-family:var(--display);font-size:clamp(1.5rem,6vw,2.2rem);padding:14px 24px;border-radius:999px}
+.rate em{font-style:normal;color:var(--cream)}
+.club-m{width:min(60vw,320px);justify-self:center}
+.m-club{animation:hop 2.6s cubic-bezier(.5,0,.5,1) infinite;transform-origin:50% 100%}
+@keyframes hop{0%,60%,100%{transform:translateY(0) scale(1,1)}70%{transform:translateY(0) scale(1.08,.92)}82%{transform:translateY(-26px) scale(.96,1.05)}92%{transform:translateY(0) scale(1.04,.96)}}
+@media (min-width:900px){.club-in{grid-template-columns:1.4fr 1fr}.club-m{width:min(26vw,360px)}}
+.rewards{display:grid;gap:14px;margin-top:56px}
+@media (min-width:700px){.rewards{grid-template-columns:1fr 1fr}}
+@media (min-width:1100px){.rewards{grid-template-columns:repeat(4,1fr)}}
+.rg{background:var(--brown);color:var(--cream);border-radius:22px;padding:22px 20px}
+.rg h4{font-size:1.5rem;color:var(--lime);margin-bottom:8px}
+.rg ul{list-style:none;margin:0;padding:0}
+.rg li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(251,243,230,.1);font-size:.9rem}
+.rg li:last-child{border-bottom:0}
+.rg b{font-weight:800;color:var(--lime);white-space:nowrap;font-variant-numeric:tabular-nums}
+.rg b::after{content:" jt";font-weight:600;font-size:.72em;color:var(--muted)}
+.club-f{margin:18px 0 0;font-size:.82rem;font-weight:600;opacity:.75}
+
+/* order + footer */
+.order{padding-block:16vh 14vh;text-align:center;background:radial-gradient(70% 60% at 50% 60%,rgba(255,138,61,.16),transparent 70%),var(--brown)}
+.order-in{display:grid;justify-items:center;gap:18px}
+.m-order{width:120px;animation:sway 3.4s ease-in-out infinite;transform-origin:50% 95%}
+.order p{margin:0 0 10px;color:var(--muted);font-size:1.05rem}
+.foot{border-top:1px solid rgba(251,243,230,.1);padding-block:40px calc(40px + env(safe-area-inset-bottom,0px))}
+.foot-in{display:grid;gap:14px;justify-items:start}
+.foot-logo{width:180px;height:auto}
+.foot p{margin:0;color:var(--muted)}
+.foot a{color:var(--lime)}
+.foot small{color:rgba(201,184,166,.55);font-size:.75rem}
+.reveal{transition-delay:var(--d,0ms)}
+@media (prefers-reduced-motion:reduce){
+  .m-intro,.m-club,.m-order,.mq,.bubble{animation:none}
+  .card:hover .ph img{transform:none}
+}
+
+.reveal{transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);transition-delay:var(--d,0ms)}
+.reveal.pre{opacity:0;transform:translateY(40px)}
+
+@media (prefers-reduced-motion:reduce){
+  .title h1 .w,.title .sub{animation:none;transform:none;opacity:1}
+  .scroll i{animation:none}
+  .reveal.pre{opacity:1;transform:none}
+}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#inicio" aria-label="La Jarana, inicio"><img src="assets/logo.png" alt="La Jarana" width="1000" height="155"></a>
+  <nav class="nav" aria-label="Principal">
+    <a href="#carta">Carta</a>
+    <a class="hide-s" href="#club">Club Jarana</a>
+    <a class="hide-s" href="#contacto">Contacto</a>
+    <a class="cta" href="#pedir">Pedir</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="inicio" aria-label="La Jarana te llama">
+    <div class="stage">
+      <canvas id="frame" aria-hidden="true"></canvas>
+      <canvas id="embers" aria-hidden="true"></canvas>
+      <div class="vig"></div>
+      <div class="grain"></div>
+      <div class="title" id="title">
+        <h1><span class="mask"><span class="w"><img src="assets/logo.png" alt="La Jarana" width="1000" height="155"></span></span></h1>
+        <p class="sub">// Te llama <span>· Pizza barbacoa</span></p>
+      </div>
+      <div class="scroll" id="hint"><i></i>Desliza</div>
+      <div class="bar" id="bar"></div>
+    </div>
+  </section>
+
+
+<section class="intro" id="carta" aria-labelledby="h-intro">
+  <div class="wrap intro-in">
+    <div class="intro-t reveal">
+      <span class="lbl">// La carta</span>
+      <h2 id="h-intro">Si te llama,<br>contesta.</h2>
+      <p class="lead">Pizzas de masa fina, porciones para picar, entrantes para compartir y algo dulce para el final. Todo lo que hay, con precio y alérgenos.</p>
+      <a class="btn" href="#pizzas">Ver la carta <span aria-hidden="true">↓</span></a>
+    </div>
+    <div class="intro-m reveal" style="--d:120ms">
+      <div class="bubble">¿Hoy toca<br>barbacoa?</div>
+      <svg class="flame m-intro" viewBox="0 0 220 250" role="img" aria-label="Monigote de La Jarana: una llama blanca con cara de pillo"><g class="body" fill="none" stroke="#120502" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path fill="#fff" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/>
+<path d="M66 136 C74 128 88 126 98 130"/>
+<path d="M126 128 C134 118 148 114 162 120 C166 122 168 126 166 130"/>
+<path fill="#fff" d="M60 160 C70 156 92 156 104 158 C104 172 96 180 84 180 C70 180 62 172 60 160 Z"/>
+<path fill="#fff" d="M120 156 C132 152 156 152 170 154 C170 170 160 178 146 178 C132 178 122 170 120 156 Z"/>
+<path d="M58 160 L106 157 M118 156 L172 153" stroke-width="8"/>
+<path d="M112 206 C126 210 142 206 152 194"/>
+<path d="M150 190 C154 194 156 198 154 202" stroke-width="5"/>
+</g>
+<g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
+<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></svg>
+    </div>
+  </div>
+  <div class="marq" aria-hidden="true"><div class="mq"><span>Pizzas</span><i aria-hidden="true">✺</i><span>Porciones</span><i aria-hidden="true">✺</i><span>Entrantes</span><i aria-hidden="true">✺</i><span>Postres</span><i aria-hidden="true">✺</i><span>Barbacoa</span><i aria-hidden="true">✺</i><span>Club Jarana</span><i aria-hidden="true">✺</i><span>Pizzas</span><i aria-hidden="true">✺</i><span>Porciones</span><i aria-hidden="true">✺</i><span>Entrantes</span><i aria-hidden="true">✺</i><span>Postres</span><i aria-hidden="true">✺</i><span>Barbacoa</span><i aria-hidden="true">✺</i><span>Club Jarana</span><i aria-hidden="true">✺</i></div></div>
+</section>
+
+<section class="feat" aria-labelledby="h-feat">
+  <div class="wrap">
+    <div class="sec-h reveal"><span class="lbl">// Tres para empezar</span><h2 id="h-feat">Las que más<br>llaman.</h2></div>
+    <div class="cards"><article class="card reveal" style="--d:0ms">
+<div class="ph"><img src="assets/barbacoa.webp" alt="Pizza Barbacoa" loading="lazy" decoding="async"><span class="n">01</span></div>
+<div class="cb"><span class="kick">La del vídeo</span><div class="row"><h4>Barbacoa</h4><span class="pr">9,95 €</span></div><p>Tomate, mozzarella, carne picada, bacon, salsa BBQ y orégano.</p></div></article><article class="card reveal" style="--d:90ms">
+<div class="ph"><img src="assets/quesos.webp" alt="Pizza Especial Quesos" loading="lazy" decoding="async"><span class="n">02</span></div>
+<div class="cb"><span class="kick">Para los de queso</span><div class="row"><h4>Especial Quesos</h4><span class="pr">9,95 €</span></div><p>Tomate, mozzarella, cheddar, parmesano, roquefort, emmental y orégano.</p></div></article><article class="card reveal" style="--d:180ms">
+<div class="ph"><img src="assets/york.webp" alt="Pizza York" loading="lazy" decoding="async"><span class="n">03</span></div>
+<div class="cb"><span class="kick">La de siempre</span><div class="row"><h4>York</h4><span class="pr">8,50 €</span></div><p>Tomate, mozzarella, jamón york y orégano.</p></div></article></div>
+  </div>
+</section>
+
+<section class="menu" aria-label="Carta completa">
+  <nav class="tabs" aria-label="Secciones de la carta"><div class="tabs-in"><a href="#pizzas" data-k="pizzas">Pizzas</a><a href="#porciones" data-k="porciones">Porciones</a><a href="#entrantes" data-k="entrantes">Entrantes</a><a href="#salsas" data-k="salsas">Salsas</a><a href="#bebidas" data-k="bebidas">Bebidas</a><a href="#postres" data-k="postres">Postres</a><a href="#club" data-k="club" class="club-tab">Club Jarana</a></div></nav>
+  <div class="wrap"><section class="cat" id="pizzas" aria-labelledby="h-pizzas">
+<header class="cat-h reveal"><span class="num">01</span><h3 id="h-pizzas">Pizzas</h3><p>Masa fina, borde dorado y queso gratinado.</p></header>
+<div class="reveal"><ul class="list two"><li class="it"><div class="row"><h4>4 Estaciones</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, atún, jamón york, champiñón, anchoas y orégano.</p><p class="al">Gluten, Lácteos, Pescado</p></li><li class="it"><div class="row"><h4>Al gusto<span class="tag">Tú mandas</span></h4><span class="ld" aria-hidden="true"></span><span class="pr">10,95 €</span></div><p class="ing">Tomate, mozzarella y 4 ingredientes a elegir.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Atún</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,50 €</span></div><p class="ing">Tomate, mozzarella, atún, orégano.</p><p class="al">Gluten, Lácteos, Pescado</p></li><li class="it"><div class="row"><h4>B. Paloma</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, bacon, nata, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja</p></li><li class="it"><div class="row"><h4>Bacon</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,50 €</span></div><p class="ing">Tomate, mozzarella, bacon, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Barbacoa<span class="tag">La del vídeo</span></h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, bacon, salsa BBQ y orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza</p></li><li class="it"><div class="row"><h4>Caprichosa</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,90 €</span></div><p class="ing">Tomate, mozzarella, jamón york, tomate natural, queso roquefort, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Carbonara</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, bacon, champiñón, cebolla, nata, pimienta, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja</p></li><li class="it"><div class="row"><h4>Caribeña</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, jamón york, piña, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Diablo</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, salsa roma, pimienta, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza, Huevo</p></li><li class="it"><div class="row"><h4>El Padrino</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, salsa picante, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza</p></li><li class="it"><div class="row"><h4>Especial Quesos</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, cheddar, parmesano, roquefort, emmental, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Génova</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, bacon, champiñón, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Gourmet BBQ</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,95 €</span></div><p class="ing">Tomate, mozzarella, carne, bacon, pollo, salsa BBQ, cebolla, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza, Sulfitos</p></li><li class="it"><div class="row"><h4>Italiana</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,35 €</span></div><p class="ing">Tomate, mozzarella, bacon, cebolla, emmental, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Lolailo</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,40 €</span></div><p class="ing">Nata, mozzarella, jamón york, emmental, queso cremoso, cebolla, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Margarita</h4><span class="ld" aria-hidden="true"></span><span class="pr">7,95 €</span></div><p class="ing">Tomate, mozzarella, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Mejicana</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, salsa picante, cebolla, pimiento verde, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja, Mostaza</p></li><li class="it"><div class="row"><h4>Melosa</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,90 €</span></div><p class="ing">Tomate, mozzarella, bacon, queso fresco, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Mermelada</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,50 €</span></div><p class="ing">Mermelada de tomate, mozzarella, bacon, queso rulo, frutos secos.</p><p class="al">Gluten, Lácteos, Soja, Frutos secos</p></li><li class="it"><div class="row"><h4>Pepperoni</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, cebolla, pimiento verde, pepperoni, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza, Sulfitos</p></li><li class="it"><div class="row"><h4>Pollo</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, nata, pollo, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Quesos Supreme</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,50 €</span></div><p class="ing">Nata, mozzarella, parmesano, roquefort, queso de rulo, emmental, orégano.</p><p class="al">Gluten, Lácteos, Maíz</p></li><li class="it"><div class="row"><h4>Roma</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,50 €</span></div><p class="ing">Tomate, mozzarella, jamón serrano, tomate natural, queso fresco, albahaca, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Tejana</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,40 €</span></div><p class="ing">Tomate, mozzarella, bacon, salsa BBQ, nata, cebolla, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Turca</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne kebab, salsa blanca, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja, Mostaza, Huevo, Apio</p></li><li class="it"><div class="row"><h4>Vegetal</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, pimiento rojo, pimiento verde, berenjena, calabacín, champiñón, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>York</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,50 €</span></div><p class="ing">Tomate, mozzarella, jamón york, orégano.</p><p class="al">Gluten, Lácteos</p></li></ul></div></section><section class="cat" id="porciones" aria-labelledby="h-porciones">
+<header class="cat-h reveal"><span class="num">02</span><h3 id="h-porciones">Porciones</h3><p>Pizza al corte para picar. Pídelas sueltas o haz tu mezcla.</p></header>
+<div class="reveal"><ul class="list three"><li class="it"><div class="row"><h4>4 Quesos</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,30 €</span></div><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Atún</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,10 €</span></div><p class="al">Gluten, Lácteos, Pescado</p></li><li class="it"><div class="row"><h4>Bacon</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,95 €</span></div><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Barbacoa</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,50 €</span></div><p class="al">Gluten, Lácteos, Soja, Mostaza, Sulfitos</p></li><li class="it"><div class="row"><h4>Carbonara</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,30 €</span></div><p class="al">Gluten, Lácteos, Maíz, Soja</p></li><li class="it"><div class="row"><h4>Chocolate</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,30 €</span></div><p class="al">Gluten, Lácteos, Frutos secos</p></li><li class="it"><div class="row"><h4>Dulce Tomate</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,75 €</span></div><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Pepperoni</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,20 €</span></div><p class="al">Gluten, Lácteos, Soja, Mostaza, Sulfitos</p></li><li class="it"><div class="row"><h4>Pollo Crujiente</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,75 €</span></div><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Turca</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,50 €</span></div><p class="al">Gluten, Lácteos, Maíz, Soja, Mostaza, Huevo, Apio</p></li><li class="it"><div class="row"><h4>Vegetal</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,20 €</span></div><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>York</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,95 €</span></div><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Porciones especiales</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,75 €</span></div><p class="al">Gluten, Lácteos</p></li></ul></div></section><section class="cat" id="entrantes" aria-labelledby="h-entrantes">
+<header class="cat-h reveal"><span class="num">03</span><h3 id="h-entrantes">Entrantes</h3><p>Para compartir, o no.</p></header>
+<div class="reveal"><ul class="list two"><li class="it"><div class="row"><h4>Gringos · pollo hipercrujiente</h4><span class="ld" aria-hidden="true"></span><span class="pr">6,50 €</span></div><p class="al">Gluten, Huevo, Lácteos, Soja, Apio, Sésamo</p></li><li class="it"><div class="row"><h4>Bacon Cheese Fries</h4><span class="ld" aria-hidden="true"></span><span class="pr">7,95 €</span></div><p class="al">Soja, Lácteos</p></li><li class="it"><div class="row"><h4>Carne Kebab Cheese Fries</h4><span class="ld" aria-hidden="true"></span><span class="pr">7,95 €</span></div><p class="al">Soja, Lácteos, Maíz, Mostaza, Apio</p></li><li class="it"><div class="row"><h4>Carne Picada Cheese Fries</h4><span class="ld" aria-hidden="true"></span><span class="pr">7,95 €</span></div><p class="al">Soja, Lácteos</p></li><li class="it"><div class="row"><h4>Ración de patatas fritas</h4><span class="ld" aria-hidden="true"></span><span class="pr">3,10 €</span></div></li></ul></div></section><section class="cat" id="salsas" aria-labelledby="h-salsas">
+<header class="cat-h reveal"><span class="num">04</span><h3 id="h-salsas">Salsas</h3><p>Para acompañar. Todas a 1,30 €.</p></header>
+<div class="reveal"><ul class="list chips"><li class="it"><div class="row"><h4>BBQ</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,30 €</span></div></li><li class="it"><div class="row"><h4>Blanca</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,30 €</span></div><p class="al">Huevo</p></li><li class="it"><div class="row"><h4>Picante</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,30 €</span></div></li><li class="it"><div class="row"><h4>Roma</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,30 €</span></div></li><li class="it"><div class="row"><h4>Sweet Chili</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,30 €</span></div></li></ul></div></section><section class="cat" id="bebidas" aria-labelledby="h-bebidas">
+<header class="cat-h reveal"><span class="num">05</span><h3 id="h-bebidas">Bebidas</h3><p>Refrescos y bebidas frías.</p></header>
+<div class="reveal"><ul class="list three"><li class="it"><div class="row"><h4>Agua 0,5 L</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,00 €</span></div></li><li class="it"><div class="row"><h4>Agua 1,5 L</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li><li class="it"><div class="row"><h4>Aquarius Limón 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li><li class="it"><div class="row"><h4>Aquarius Naranja 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li><li class="it"><div class="row"><h4>Cerveza 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div><p class="al">Gluten</p></li><li class="it"><div class="row"><h4>Coca-Cola 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li><li class="it"><div class="row"><h4>Coca-Cola Zero 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li><li class="it"><div class="row"><h4>Fanta Naranja 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li><li class="it"><div class="row"><h4>Nestea 33 cl</h4><span class="ld" aria-hidden="true"></span><span class="pr">1,90 €</span></div></li></ul></div></section><section class="cat" id="postres" aria-labelledby="h-postres">
+<header class="cat-h reveal"><span class="num">06</span><h3 id="h-postres">Postres</h3><p>Para cerrar con algo dulce.</p></header>
+<div class="reveal"><ul class="list two"><li class="it"><div class="row"><h4>Coulant de chocolate</h4><span class="ld" aria-hidden="true"></span><span class="pr">3,50 €</span></div><p class="al">Gluten, Lácteos, Huevo, Soja</p></li><li class="it"><div class="row"><h4>Crepe de Nutella</h4><span class="ld" aria-hidden="true"></span><span class="pr">3,50 €</span></div><p class="al">Gluten, Lácteos, Huevo, Frutos secos</p></li><li class="it"><div class="row"><h4>Gofre de Nutella</h4><span class="ld" aria-hidden="true"></span><span class="pr">3,50 €</span></div><p class="al">Gluten, Lácteos, Huevo, Soja, Frutos secos</p></li><li class="it"><div class="row"><h4>Profiteroles</h4><span class="ld" aria-hidden="true"></span><span class="pr">2,95 €</span></div><p class="al">Gluten, Lácteos, Huevo, Frutos secos, Cacahuete</p></li></ul></div></section>
+  <p class="note reveal">Precios en euros. Si tienes alguna alergia, dínoslo al pedir y te contamos qué lleva cada cosa.</p>
+  </div>
+</section>
+
+<section class="club" id="club" aria-labelledby="h-club">
+  <div class="wrap club-in">
+    <div class="club-t reveal">
+      <span class="lbl dark">// Club Jarana</span>
+      <h2 id="h-club">Juntos hacemos jarana.</h2>
+      <p>Acumula <b>jaranitos</b> con tus pedidos y cámbialos por tus productos favoritos. Cuantos más acumules, más cosas te llevas.</p>
+      <div class="rate"><span>1 €</span><em>=</em><span>1 jaranito</span></div>
+    </div>
+    <div class="club-m reveal" style="--d:120ms"><svg class="flame m-club" viewBox="0 0 220 250" aria-hidden="true"><g class="body" fill="none" stroke="#120502" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path fill="#fff" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/>
+<path d="M66 136 C74 128 88 126 98 130"/>
+<path d="M126 128 C134 118 148 114 162 120 C166 122 168 126 166 130"/>
+<path fill="#fff" d="M60 160 C70 156 92 156 104 158 C104 172 96 180 84 180 C70 180 62 172 60 160 Z"/>
+<path fill="#fff" d="M120 156 C132 152 156 152 170 154 C170 170 160 178 146 178 C132 178 122 170 120 156 Z"/>
+<path d="M58 160 L106 157 M118 156 L172 153" stroke-width="8"/>
+<path d="M112 206 C126 210 142 206 152 194"/>
+<path d="M150 190 C154 194 156 198 154 202" stroke-width="5"/>
+</g>
+<g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
+<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></svg></div>
+  </div>
+  <div class="wrap"><div class="rewards"><div class="rg reveal" style="--d:0ms"><h4>Pizzas</h4><ul><li><span>Pizzas de 7,95 €</span><b>310</b></li><li><span>Pizzas de 8,35 a 8,50 €</span><b>330</b></li><li><span>Pizzas de 8,95 a 9,40 €</span><b>360</b></li><li><span>Pizzas de 9,95 €</span><b>390</b></li><li><span>Pizzas de 10,95 €</span><b>430</b></li><li><span>Ingrediente extra</span><b>40</b></li></ul></div><div class="rg reveal" style="--d:80ms"><h4>Porciones</h4><ul><li><span>Porciones de 1,95 €</span><b>80</b></li><li><span>Porciones de 2,10 €</span><b>80</b></li><li><span>Porciones de 2,20 a 2,30 €</span><b>90</b></li><li><span>Porciones de 2,50 a 2,75 €</span><b>100</b></li></ul></div><div class="rg reveal" style="--d:160ms"><h4>Para picar</h4><ul><li><span>Ración de patatas</span><b>100</b></li><li><span>Gringos (6 uds.)</span><b>300</b></li><li><span>Cheese fries</span><b>400</b></li><li><span>Salsa extra</span><b>40</b></li></ul></div><div class="rg reveal" style="--d:240ms"><h4>Dulce y bebida</h4><ul><li><span>Crepe (+ topping)</span><b>120</b></li><li><span>Gofre (+ topping)</span><b>120</b></li><li><span>Coulant</span><b>120</b></li><li><span>Profiteroles</span><b>100</b></li><li><span>Bebida</span><b>60</b></li></ul></div></div><p class="club-f reveal">Jaranitos necesarios para cada recompensa.</p></div>
+</section>
+
+<section class="order" id="pedir" aria-labelledby="h-order">
+  <div class="wrap order-in reveal">
+    <svg class="flame m-order" viewBox="0 0 220 250" aria-hidden="true"><g class="body" fill="none" stroke="#120502" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path fill="#fff" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/>
+<path d="M66 136 C74 128 88 126 98 130"/>
+<path d="M126 128 C134 118 148 114 162 120 C166 122 168 126 166 130"/>
+<path fill="#fff" d="M60 160 C70 156 92 156 104 158 C104 172 96 180 84 180 C70 180 62 172 60 160 Z"/>
+<path fill="#fff" d="M120 156 C132 152 156 152 170 154 C170 170 160 178 146 178 C132 178 122 170 120 156 Z"/>
+<path d="M58 160 L106 157 M118 156 L172 153" stroke-width="8"/>
+<path d="M112 206 C126 210 142 206 152 194"/>
+<path d="M150 190 C154 194 156 198 154 202" stroke-width="5"/>
+</g>
+<g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
+<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></svg>
+    <h2 id="h-order">¿Te llama?</h2>
+    <p>Haz tu pedido en un par de toques.</p>
+    <a class="btn big" href="#pedir">Pedir ahora</a>
+  </div>
+</section>
+
+</main>
+<footer class="foot" id="contacto">
+  <div class="wrap foot-in">
+    <img src="assets/logo.png" alt="La Jarana" width="1000" height="155" class="foot-logo" loading="lazy">
+    <p>Te llama. <a href="https://www.instagram.com/la_jarana_te_llama/">@la_jarana_te_llama</a></p>
+    <small>Prototipo de la nueva web · contenido de prueba</small>
+  </div>
+</footer>
+
+
+<script>
+(() => {
+  // HD set (full clip resolution) unless the viewer asked to save data or is on a slow connection
+  const conn = navigator.connection || {};
+  const HD = !(conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || ''));
+  const DIR = HD ? 'h/' : 'f/';
+  const N = 145, SRC = i => DIR + String(i).padStart(3, '0') + '.webp';
+  const FW = HD ? 812 : 720, FH = HD ? 1116 : 990;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const hero = document.querySelector('.hero');
+  const cv = document.getElementById('frame'), ctx = cv.getContext('2d', { alpha: false });
+  const ev = document.getElementById('embers'), ectx = ev.getContext('2d');
+  const title = document.getElementById('title'), hint = document.getElementById('hint'), bar = document.getElementById('bar');
+  const mid = document.createElement('canvas'); mid.width = 90; mid.height = 124;
+  const mctx = mid.getContext('2d');
+  const tiny = document.createElement('canvas'); tiny.width = 30; tiny.height = 41;
+  const tctx = tiny.getContext('2d');
+
+  const frames = new Array(N).fill(null);
+  let W = 0, H = 0, DPR = 1, rect = null, lastDrawn = -1, sideFade = null;
+
+  // ---- Loading: frame 0 first, then coarse-to-fine so scrubbing works early
+  const order = [], seen = new Set();
+  [0, N - 1].concat([16, 8, 4, 2, 1].flatMap(s => Array.from({ length: Math.ceil(N / s) }, (_, k) => k * s)))
+    .forEach(i => { if (i < N && !seen.has(i)) { seen.add(i); order.push(i); } });
+  let cursor = 0;
+  function loadNext() {
+    if (cursor >= order.length) return;
+    const i = order[cursor++];
+    const img = new Image(); img.decoding = 'async'; img.src = SRC(i);
+    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) lastDrawn = -1; loadNext(); };
+    img.decode().then(() => ('createImageBitmap' in window ? createImageBitmap(img) : img))
+      .then(done, () => done(img.complete ? img : null));
+  }
+  for (let k = 0; k < 6; k++) loadNext();
+
+  function nearest(i) {
+    if (frames[i]) return frames[i];
+    for (let d = 1; d < N; d++) {
+      if (i - d >= 0 && frames[i - d]) return frames[i - d];
+      if (i + d < N && frames[i + d]) return frames[i + d];
+    }
+    return null;
+  }
+
+  // ---- Layout: keep the pizza + explosion in view on any screen; the rest is ambient light
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ev.width = Math.round(W * DPR); ev.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ectx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const portrait = W / H < 0.9;
+    // visible region of the clip we want to guarantee
+    const vx = portrait ? 0.84 : 1.0, vy = portrait ? 0.80 : 0.86;
+    const s = Math.min(W / (vx * FW), H / (vy * FH));
+    const dw = FW * s, dh = FH * s;
+    const cy = portrait ? H * 0.43 : H * 0.5;          // centre of the action
+    const dy = cy - dh * 0.56;                          // pizza+explosion sits ~56% down the clip
+    const x = portrait ? (W - dw) / 2 : Math.min(W * 0.6 - dw / 2, W - dw - W * 0.03);
+    rect = { x: Math.max(x, (W - dw) / 2 > 0 ? Math.min(x, W - dw) : (W - dw) / 2), y: dy, w: dw, h: dh };
+    sideFade = null;
+    if (!portrait) {
+      const g = ctx.createLinearGradient(0, 0, W, 0);
+      const l = Math.max(rect.x / W, 0), r = Math.min((rect.x + dw) / W, 1);
+      g.addColorStop(0, 'rgba(27,8,2,0.7)'); g.addColorStop(l, 'rgba(27,8,2,0.15)');
+      g.addColorStop(r, 'rgba(27,8,2,0.15)'); g.addColorStop(1, 'rgba(27,8,2,0.7)');
+      sideFade = g;
+    }
+    lastDrawn = -1;
+    initEmbers();
+  }
+
+  function drawFrame(i) {
+    const f = nearest(i); if (!f) return;
+    // ambient: same frame, blurred by down/up-scaling, darkened
+    mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
+    tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
+    const cs = Math.max(W / tiny.width, H / tiny.height) * 1.08;
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low';
+    ctx.drawImage(tiny, (W - tiny.width * cs) / 2, (H - tiny.height * cs) / 2, tiny.width * cs, tiny.height * cs);
+    ctx.fillStyle = 'rgba(27,8,2,0.58)'; ctx.fillRect(0, 0, W, H);
+    if (sideFade) { ctx.fillStyle = sideFade; ctx.fillRect(0, 0, W, H); }
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(f, rect.x, rect.y, rect.w, rect.h);
+  }
+
+  // ---- Embers (light, procedural)
+  let embers = [];
+  function initEmbers() {
+    if (reduce) { embers = []; return; }
+    const n = W < 700 ? 34 : 70;
+    embers = Array.from({ length: n }, () => spawn(true));
+  }
+  function spawn(any) {
+    return { x: Math.random() * W, y: any ? Math.random() * H : H + 10, r: Math.random() * 1.6 + 0.5,
+      vy: -(Math.random() * 28 + 14), vx: (Math.random() - 0.5) * 14, ph: Math.random() * 6.28, a: Math.random() * 0.6 + 0.35 };
+  }
+  function drawEmbers(dt, t, boost) {
+    ectx.clearRect(0, 0, W, H);
+    ectx.globalCompositeOperation = 'lighter';
+    for (const e of embers) {
+      e.y += e.vy * dt * (1 + boost * 1.5); e.x += (e.vx + Math.sin(t * 1.3 + e.ph) * 10) * dt;
+      if (e.y < -10) Object.assign(e, spawn(false));
+      const fl = 0.6 + 0.4 * Math.sin(t * 6 + e.ph);
+      ectx.fillStyle = `rgba(255,${140 + (fl * 60) | 0},70,${e.a * fl * (0.6 + boost * 0.6)})`;
+      ectx.beginPath(); ectx.arc(e.x, e.y, e.r, 0, 6.283); ectx.fill();
+    }
+    ectx.globalCompositeOperation = 'source-over';
+  }
+
+  // ---- Scroll scrub with smoothing (like the reference: shown += (p - shown) * 0.15)
+  let shown = 0, visible = true, last = performance.now();
+  function progress() {
+    const r = hero.getBoundingClientRect();
+    const span = r.height - innerHeight;
+    return span > 0 ? Math.min(Math.max(-r.top / span, 0), 1) : 0;
+  }
+  function target() { return Math.round(progress() * (N - 1)); }
+
+  function tick(now) {
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    if (visible) {
+      const p = progress();
+      const k = reduce ? 1 : 1 - Math.pow(0.85, dt * 60);
+      shown += (p - shown) * k;
+      if (Math.abs(p - shown) < 0.0005) shown = p;
+      const idx = Math.round(shown * (N - 1));
+      if (idx !== lastDrawn) { drawFrame(idx); if (nearest(idx)) lastDrawn = frames[idx] ? idx : -1; }
+      title.style.transform = `translate3d(0,${(-shown * 7).toFixed(2)}vh,0)`;
+      hint.style.opacity = shown > 0.04 ? 0 : 1;
+      bar.style.transform = `scaleX(${shown.toFixed(4)})`;
+      if (embers.length) drawEmbers(dt, now / 1000, shown);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { rootMargin: '100px' }).observe(hero);
+
+  // reveal for the following section
+  const rev = document.querySelectorAll('.reveal');
+  rev.forEach(el => el.classList.add('pre'));
+  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('pre'); io2.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  rev.forEach(el => io2.observe(el));
+
+
+  // ---- Carta: solid header after the hero, tab scrollspy, mascot eyes
+  const top = document.querySelector('.top');
+  let st = false;
+  const onScroll = () => { if (st) return; st = true; requestAnimationFrame(() => { st = false;
+    top.classList.toggle('solid', hero.getBoundingClientRect().bottom < 80); }); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  const tabsIn = document.querySelector('.tabs-in');
+  const tabLinks = [...document.querySelectorAll('.tabs a')];
+  const setOn = k => tabLinks.forEach(a => { const on = a.dataset.k === k; a.classList.toggle('on', on);
+    if (on) { a.setAttribute('aria-current', 'true'); tabsIn.scrollTo({ left: a.offsetLeft - 16, behavior: reduce ? 'auto' : 'smooth' }); } else a.removeAttribute('aria-current'); });
+  const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) setOn(e.target.id); }), { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('.cat, #club').forEach(el => spy.observe(el));
+
+  const flames = [...document.querySelectorAll('.flame')];
+  if (!reduce && matchMedia('(pointer:fine)').matches) {
+    let px = 0, py = 0, pend = false;
+    addEventListener('pointermove', ev => { px = ev.clientX; py = ev.clientY; if (pend) return; pend = true;
+      requestAnimationFrame(() => { pend = false; flames.forEach(f => { const r = f.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        const dx = px - (r.left + r.width * .55), dy = py - (r.top + r.height * .66), d = Math.hypot(dx, dy) || 1;
+        f.querySelector('.pupils').style.transform = `translate(${(dx / d * 4).toFixed(2)}px,${(dy / d * 2.5).toFixed(2)}px)`; }); }); }, { passive: true });
+  }
+  if (!reduce) setInterval(() => { flames.forEach(f => { f.classList.add('blink'); setTimeout(() => f.classList.remove('blink'), 140); }); }, 3800);
+
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
+  resize();
+  requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>

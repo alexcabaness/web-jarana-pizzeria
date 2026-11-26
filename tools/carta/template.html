@@ -1,0 +1,296 @@
+<title>La Jarana te llama</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="preload" href="assets/Sardin.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+@font-face{font-family:"Sardin";src:url("assets/Sardin.ttf") format("truetype");font-display:swap}
+/* Layout: pinned full-screen canvas that scrubs the pizza clip with the scroll; brand title anchored bottom-left like a film title card. Single dark look (brand brown). */
+:root{
+  --brown:#1b0802;
+  --brown-2:#2a1006;
+  --lime:#ccff6b;
+  --cream:#fbf3e6;
+  --muted:#c9b8a6;
+  --ember:#ff8a3d;
+  --display:"Sardin","Arial Black","Helvetica Neue",sans-serif;
+  --hh:64px;
+  --body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html{background:var(--brown)}
+body{background:var(--brown);color:var(--cream);font-family:var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--brown)}
+
+/* Header */
+.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;
+  padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:linear-gradient(to bottom,rgba(27,8,2,.75),rgba(27,8,2,0));}
+.brand{display:block;line-height:0}
+.brand img{height:17px;width:auto}
+@media (min-width:760px){.brand img{height:21px}}
+.top{transition:background-color .35s}
+.top.solid{background:rgba(27,8,2,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.nav{display:flex;align-items:center;gap:26px}
+.nav a{color:var(--cream);text-decoration:none;font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;opacity:.85}
+.nav a:hover,.nav a:focus-visible{opacity:1;color:var(--lime)}
+.cta{background:var(--lime);color:var(--brown)!important;opacity:1!important;padding:10px 16px;border-radius:999px;font-weight:700!important;letter-spacing:.14em!important}
+.cta:hover{filter:brightness(1.05)}
+.nav .hide-s{display:none}
+@media (min-width:760px){.nav .hide-s{display:inline}}
+a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+
+/* Hero */
+.hero{position:relative;height:340vh}
+.stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:var(--brown)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#embers{pointer-events:none}
+.grain{position:absolute;inset:-50%;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,rgba(27,8,2,0) 55%,rgba(27,8,2,.75) 100%),linear-gradient(to top,rgba(27,8,2,.85) 0%,rgba(27,8,2,0) 28%)}
+
+.title{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 9vh);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  will-change:transform,opacity}
+.title h1{margin:0;line-height:0}
+.title h1 img{display:block;width:min(92vw,560px);height:auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.45))}
+.title h1 .dot{color:var(--lime)}
+.title h1 .w{display:inline-block;transform:translateY(110%);opacity:0;animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards}
+.title .sub{margin:18px 0 0;font-size:.78rem;font-weight:700;letter-spacing:.42em;text-transform:uppercase;color:var(--lime);opacity:0;animation:fade .8s .45s forwards}
+.title .sub span{color:var(--cream);opacity:.6}
+.mask{display:block;overflow:hidden;padding-bottom:.06em}
+@keyframes rise{to{transform:none;opacity:1}}
+@keyframes fade{to{opacity:1}}
+
+.scroll{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;font-size:.62rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--cream);
+  padding:9px 14px;border:1px solid rgba(251,243,230,.25);border-radius:999px;background:rgba(27,8,2,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:opacity .4s}
+.scroll i{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px)}}
+.bar{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--lime);opacity:.9}
+
+@media (min-width:900px){
+  .title{bottom:10vh;padding-left:max(5vw,env(safe-area-inset-left,0px))}
+  .title h1 img{width:min(52vw,820px)}
+  .scroll{left:auto;right:max(5vw,env(safe-area-inset-right,0px));transform:none}
+}
+
+/*CARTA_CSS*/
+.reveal{transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);transition-delay:var(--d,0ms)}
+.reveal.pre{opacity:0;transform:translateY(40px)}
+
+@media (prefers-reduced-motion:reduce){
+  .title h1 .w,.title .sub{animation:none;transform:none;opacity:1}
+  .scroll i{animation:none}
+  .reveal.pre{opacity:1;transform:none}
+}
+</style>
+
+<header class="top">
+  <a class="brand" href="#inicio" aria-label="La Jarana, inicio"><img src="assets/logo.png" alt="La Jarana" width="1000" height="155"></a>
+  <nav class="nav" aria-label="Principal">
+    <a href="#carta">Carta</a>
+    <a class="hide-s" href="#club">Club Jarana</a>
+    <a class="hide-s" href="#contacto">Contacto</a>
+    <a class="cta" href="#pedir">Pedir</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="inicio" aria-label="La Jarana te llama">
+    <div class="stage">
+      <canvas id="frame" aria-hidden="true"></canvas>
+      <canvas id="embers" aria-hidden="true"></canvas>
+      <div class="vig"></div>
+      <div class="grain"></div>
+      <div class="title" id="title">
+        <h1><span class="mask"><span class="w"><img src="assets/logo.png" alt="La Jarana" width="1000" height="155"></span></span></h1>
+        <p class="sub">// Te llama <span>· Pizza barbacoa</span></p>
+      </div>
+      <div class="scroll" id="hint"><i></i>Desliza</div>
+      <div class="bar" id="bar"></div>
+    </div>
+  </section>
+
+<!--CARTA-->
+
+<script>
+(() => {
+  // HD set (full clip resolution) unless the viewer asked to save data or is on a slow connection
+  const conn = navigator.connection || {};
+  const HD = !(conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || ''));
+  const DIR = HD ? 'h/' : 'f/';
+  const N = 145, SRC = i => DIR + String(i).padStart(3, '0') + '.webp';
+  const FW = HD ? 812 : 720, FH = HD ? 1116 : 990;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const hero = document.querySelector('.hero');
+  const cv = document.getElementById('frame'), ctx = cv.getContext('2d', { alpha: false });
+  const ev = document.getElementById('embers'), ectx = ev.getContext('2d');
+  const title = document.getElementById('title'), hint = document.getElementById('hint'), bar = document.getElementById('bar');
+  const mid = document.createElement('canvas'); mid.width = 90; mid.height = 124;
+  const mctx = mid.getContext('2d');
+  const tiny = document.createElement('canvas'); tiny.width = 30; tiny.height = 41;
+  const tctx = tiny.getContext('2d');
+
+  const frames = new Array(N).fill(null);
+  let W = 0, H = 0, DPR = 1, rect = null, lastDrawn = -1, sideFade = null;
+
+  // ---- Loading: frame 0 first, then coarse-to-fine so scrubbing works early
+  const order = [], seen = new Set();
+  [0, N - 1].concat([16, 8, 4, 2, 1].flatMap(s => Array.from({ length: Math.ceil(N / s) }, (_, k) => k * s)))
+    .forEach(i => { if (i < N && !seen.has(i)) { seen.add(i); order.push(i); } });
+  let cursor = 0;
+  function loadNext() {
+    if (cursor >= order.length) return;
+    const i = order[cursor++];
+    const img = new Image(); img.decoding = 'async'; img.src = SRC(i);
+    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) lastDrawn = -1; loadNext(); };
+    img.decode().then(() => ('createImageBitmap' in window ? createImageBitmap(img) : img))
+      .then(done, () => done(img.complete ? img : null));
+  }
+  for (let k = 0; k < 6; k++) loadNext();
+
+  function nearest(i) {
+    if (frames[i]) return frames[i];
+    for (let d = 1; d < N; d++) {
+      if (i - d >= 0 && frames[i - d]) return frames[i - d];
+      if (i + d < N && frames[i + d]) return frames[i + d];
+    }
+    return null;
+  }
+
+  // ---- Layout: keep the pizza + explosion in view on any screen; the rest is ambient light
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ev.width = Math.round(W * DPR); ev.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ectx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const portrait = W / H < 0.9;
+    // visible region of the clip we want to guarantee
+    const vx = portrait ? 0.84 : 1.0, vy = portrait ? 0.80 : 0.86;
+    const s = Math.min(W / (vx * FW), H / (vy * FH));
+    const dw = FW * s, dh = FH * s;
+    const cy = portrait ? H * 0.43 : H * 0.5;          // centre of the action
+    const dy = cy - dh * 0.56;                          // pizza+explosion sits ~56% down the clip
+    const x = portrait ? (W - dw) / 2 : Math.min(W * 0.6 - dw / 2, W - dw - W * 0.03);
+    rect = { x: Math.max(x, (W - dw) / 2 > 0 ? Math.min(x, W - dw) : (W - dw) / 2), y: dy, w: dw, h: dh };
+    sideFade = null;
+    if (!portrait) {
+      const g = ctx.createLinearGradient(0, 0, W, 0);
+      const l = Math.max(rect.x / W, 0), r = Math.min((rect.x + dw) / W, 1);
+      g.addColorStop(0, 'rgba(27,8,2,0.7)'); g.addColorStop(l, 'rgba(27,8,2,0.15)');
+      g.addColorStop(r, 'rgba(27,8,2,0.15)'); g.addColorStop(1, 'rgba(27,8,2,0.7)');
+      sideFade = g;
+    }
+    lastDrawn = -1;
+    initEmbers();
+  }
+
+  function drawFrame(i) {
+    const f = nearest(i); if (!f) return;
+    // ambient: same frame, blurred by down/up-scaling, darkened
+    mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
+    tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
+    const cs = Math.max(W / tiny.width, H / tiny.height) * 1.08;
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low';
+    ctx.drawImage(tiny, (W - tiny.width * cs) / 2, (H - tiny.height * cs) / 2, tiny.width * cs, tiny.height * cs);
+    ctx.fillStyle = 'rgba(27,8,2,0.58)'; ctx.fillRect(0, 0, W, H);
+    if (sideFade) { ctx.fillStyle = sideFade; ctx.fillRect(0, 0, W, H); }
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(f, rect.x, rect.y, rect.w, rect.h);
+  }
+
+  // ---- Embers (light, procedural)
+  let embers = [];
+  function initEmbers() {
+    if (reduce) { embers = []; return; }
+    const n = W < 700 ? 34 : 70;
+    embers = Array.from({ length: n }, () => spawn(true));
+  }
+  function spawn(any) {
+    return { x: Math.random() * W, y: any ? Math.random() * H : H + 10, r: Math.random() * 1.6 + 0.5,
+      vy: -(Math.random() * 28 + 14), vx: (Math.random() - 0.5) * 14, ph: Math.random() * 6.28, a: Math.random() * 0.6 + 0.35 };
+  }
+  function drawEmbers(dt, t, boost) {
+    ectx.clearRect(0, 0, W, H);
+    ectx.globalCompositeOperation = 'lighter';
+    for (const e of embers) {
+      e.y += e.vy * dt * (1 + boost * 1.5); e.x += (e.vx + Math.sin(t * 1.3 + e.ph) * 10) * dt;
+      if (e.y < -10) Object.assign(e, spawn(false));
+      const fl = 0.6 + 0.4 * Math.sin(t * 6 + e.ph);
+      ectx.fillStyle = `rgba(255,${140 + (fl * 60) | 0},70,${e.a * fl * (0.6 + boost * 0.6)})`;
+      ectx.beginPath(); ectx.arc(e.x, e.y, e.r, 0, 6.283); ectx.fill();
+    }
+    ectx.globalCompositeOperation = 'source-over';
+  }
+
+  // ---- Scroll scrub with smoothing (like the reference: shown += (p - shown) * 0.15)
+  let shown = 0, visible = true, last = performance.now();
+  function progress() {
+    const r = hero.getBoundingClientRect();
+    const span = r.height - innerHeight;
+    return span > 0 ? Math.min(Math.max(-r.top / span, 0), 1) : 0;
+  }
+  function target() { return Math.round(progress() * (N - 1)); }
+
+  function tick(now) {
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    if (visible) {
+      const p = progress();
+      const k = reduce ? 1 : 1 - Math.pow(0.85, dt * 60);
+      shown += (p - shown) * k;
+      if (Math.abs(p - shown) < 0.0005) shown = p;
+      const idx = Math.round(shown * (N - 1));
+      if (idx !== lastDrawn) { drawFrame(idx); if (nearest(idx)) lastDrawn = frames[idx] ? idx : -1; }
+      title.style.transform = `translate3d(0,${(-shown * 7).toFixed(2)}vh,0)`;
+      hint.style.opacity = shown > 0.04 ? 0 : 1;
+      bar.style.transform = `scaleX(${shown.toFixed(4)})`;
+      if (embers.length) drawEmbers(dt, now / 1000, shown);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { rootMargin: '100px' }).observe(hero);
+
+  // reveal for the following section
+  const rev = document.querySelectorAll('.reveal');
+  rev.forEach(el => el.classList.add('pre'));
+  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('pre'); io2.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  rev.forEach(el => io2.observe(el));
+
+
+  // ---- Carta: solid header after the hero, tab scrollspy, mascot eyes
+  const top = document.querySelector('.top');
+  let st = false;
+  const onScroll = () => { if (st) return; st = true; requestAnimationFrame(() => { st = false;
+    top.classList.toggle('solid', hero.getBoundingClientRect().bottom < 80); }); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  const tabsIn = document.querySelector('.tabs-in');
+  const tabLinks = [...document.querySelectorAll('.tabs a')];
+  const setOn = k => tabLinks.forEach(a => { const on = a.dataset.k === k; a.classList.toggle('on', on);
+    if (on) { a.setAttribute('aria-current', 'true'); tabsIn.scrollTo({ left: a.offsetLeft - 16, behavior: reduce ? 'auto' : 'smooth' }); } else a.removeAttribute('aria-current'); });
+  const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) setOn(e.target.id); }), { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('.cat, #club').forEach(el => spy.observe(el));
+
+  const flames = [...document.querySelectorAll('.flame')];
+  if (!reduce && matchMedia('(pointer:fine)').matches) {
+    let px = 0, py = 0, pend = false;
+    addEventListener('pointermove', ev => { px = ev.clientX; py = ev.clientY; if (pend) return; pend = true;
+      requestAnimationFrame(() => { pend = false; flames.forEach(f => { const r = f.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        const dx = px - (r.left + r.width * .55), dy = py - (r.top + r.height * .66), d = Math.hypot(dx, dy) || 1;
+        f.querySelector('.pupils').style.transform = `translate(${(dx / d * 4).toFixed(2)}px,${(dy / d * 2.5).toFixed(2)}px)`; }); }); }, { passive: true });
+  }
+  if (!reduce) setInterval(() => { flames.forEach(f => { f.classList.add('blink'); setTimeout(() => f.classList.remove('blink'), 140); }); }, 3800);
+
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
+  resize();
+  requestAnimationFrame(tick);
+})();
+</script>
