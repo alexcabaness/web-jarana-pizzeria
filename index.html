@@ -201,6 +201,28 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   .card:hover .ph img{transform:none}
 }
 
+
+/* Pedido online (FoodBooking) en ventana */
+.order-modal{padding:0;border:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%;color:var(--cream)}
+.order-modal::backdrop{background:rgba(27,8,2,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.order-modal[open]{display:flex;align-items:center;justify-content:center}
+.om-box{display:flex;flex-direction:column;width:min(1100px,calc(100% - 24px));height:min(88vh,900px);height:min(88dvh,900px);background:var(--brown);border:2px solid rgba(204,255,107,.28);border-radius:24px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.5);animation:omIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes omIn{from{opacity:0;transform:translateY(24px) scale(.98)}}
+.om-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px 12px 18px;border-bottom:1px solid rgba(251,243,230,.1)}
+.om-h p{margin:2px 0 0;font-family:var(--display);font-size:1.3rem}
+.om-h .lbl{font-size:.62rem}
+.om-act{display:flex;gap:8px}
+.om-btn{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(251,243,230,.14);background:rgba(251,243,230,.06);color:var(--cream);cursor:pointer}
+.om-btn.lime{background:var(--lime);color:var(--brown);border-color:var(--lime)}
+.om-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.om-frame{position:relative;flex:1;min-height:0;background:#fff}
+.om-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.om-load{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:14px;background:var(--brown);color:var(--muted);font-weight:600;transition:opacity .4s}
+.om-load .flame{width:70px;animation:sway 1.6s ease-in-out infinite;transform-origin:50% 95%}
+.om-frame.ok .om-load{opacity:0;pointer-events:none}
+.om-f{margin:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.78rem;color:var(--muted);text-align:center;border-top:1px solid rgba(251,243,230,.1)}
+.om-f a{color:var(--lime)}
+@media (max-width:600px){.om-box{width:100%;height:100%;border-radius:0;border:0}}
 .reveal{transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);transition-delay:var(--d,0ms)}
 .reveal.pre{opacity:0;transform:translateY(40px)}
 
@@ -218,13 +240,14 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   <nav class="nav" aria-label="Principal">
     <a href="#carta">Carta</a>
     <a class="hide-s" href="#contacto">Contacto</a>
-    <a class="cta" href="#pedir">Pedir</a>
+    <a class="cta" href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener" data-pedir>Pedir</a>
   </nav>
 </header>
 
 <main>
   <section class="hero" id="inicio" aria-label="La Jarana te llama">
     <div class="stage">
+      <canvas id="amb" aria-hidden="true"></canvas>
       <canvas id="frame" aria-hidden="true"></canvas>
       <canvas id="embers" aria-hidden="true"></canvas>
       <div class="vig"></div>
@@ -336,11 +359,26 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 <circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></g></svg>
     <h2 id="h-order">¿Te llama?</h2>
     <p>Haz tu pedido en un par de toques.</p>
-    <a class="btn big" href="#pedir">Pedir ahora</a>
+    <a class="btn big" href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener" data-pedir>Pedir ahora</a>
   </div>
 </section>
 
 </main>
+<dialog class="order-modal" id="pedidoDlg" aria-labelledby="pedido-t">
+  <div class="om-box">
+    <div class="om-h">
+      <div><span class="lbl">Jarana</span><p id="pedido-t">Haz tu pedido</p></div>
+      <div class="om-act">
+        <a class="om-btn lime" href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener" aria-label="Abrir el pedido en una pestaña nueva" title="Abrir en una pestaña nueva"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        <button class="om-btn" type="button" data-cerrar aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </div>
+    <div class="om-frame"><iframe title="Pedido online de La Jarana" allow="geolocation" data-src="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b"></iframe>
+      <div class="om-load"><svg class="flame" viewBox="0 0 220 250" aria-hidden="true"><path fill="#fff" stroke="#120502" stroke-width="7" stroke-linejoin="round" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/></svg>Cargando la carta…</div>
+    </div>
+    <p class="om-f">Pedidos gestionados por FoodBooking. ¿No carga? <a href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener">Ábrelo aquí</a>.</p>
+  </div>
+</dialog>
 <footer class="foot" id="contacto">
   <div class="wrap foot-in">
     <img src="assets/logo.png" alt="La Jarana" width="1000" height="155" class="foot-logo" loading="lazy">
@@ -352,16 +390,22 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 
 <script>
 (() => {
-  // HD set (full clip resolution) unless the viewer asked to save data or is on a slow connection
+  // Frame set by the pixels the clip will really cover on this screen:
+  // x/ (1218x1674) for large/retina screens, h/ (812x1116) by default, f/ (720x990) when saving data or on 2G/3G
   const conn = navigator.connection || {};
-  const HD = !(conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || ''));
-  const DIR = HD ? 'h/' : 'f/';
+  const slow = conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || '');
+  const portrait0 = innerWidth / innerHeight < 0.9;
+  const needPx = Math.min(innerWidth * 1116 / ((portrait0 ? 0.84 : 1) * 812), innerHeight / (portrait0 ? 0.80 : 0.86)) * Math.min(devicePixelRatio || 1, 2);
+  const SET = slow ? ['f/', 720, 990] : (needPx > 1250 && (navigator.deviceMemory || 8) >= 8) ? ['x/', 1218, 1674] : ['h/', 812, 1116];
+  const DIR = SET[0];
   const N = 145, SRC = i => DIR + String(i).padStart(3, '0') + '.webp';
-  const FW = HD ? 812 : 720, FH = HD ? 1116 : 990;
+  const FW = SET[1], FH = SET[2];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const hero = document.querySelector('.hero');
-  const cv = document.getElementById('frame'), ctx = cv.getContext('2d', { alpha: false });
+  const cv = document.getElementById('frame'), ctx = cv.getContext('2d');
+  // ambient light lives on its own low-res layer (it is a blur anyway), so a scroll step only repaints the clip itself
+  const av = document.getElementById('amb'), actx = av.getContext('2d', { alpha: false }); const AS = 6;
   const ev = document.getElementById('embers'), ectx = ev.getContext('2d');
   const eater = document.getElementById('eater'), title = document.getElementById('title'), hint = document.getElementById('hint'), bar = document.getElementById('bar');
   const mid = document.createElement('canvas'); mid.width = 90; mid.height = 124;
@@ -370,7 +414,8 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   const tctx = tiny.getContext('2d');
 
   const frames = new Array(N).fill(null);
-  let W = 0, H = 0, DPR = 1, rect = null, lastDrawn = -1, sideFade = null;
+  let blendOn = true, ema = 1 / 60; // the cross-fade switches itself off on devices that can't hold ~50 fps
+  let W = 0, H = 0, DPR = 1, rect = null, dirty = true, lastPos = -1, ambI = -1, sideFade = null;
 
   // ---- Loading: frame 0 first, then coarse-to-fine so scrubbing works early
   const order = [], seen = new Set();
@@ -381,7 +426,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     if (cursor >= order.length) return;
     const i = order[cursor++];
     const img = new Image(); img.decoding = 'async'; img.src = SRC(i);
-    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) lastDrawn = -1; loadNext(); };
+    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) { dirty = true; ambI = -1; } loadNext(); };
     img.decode().then(() => ('createImageBitmap' in window ? createImageBitmap(img) : img))
       .then(done, () => done(img.complete ? img : null));
   }
@@ -403,6 +448,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
     ev.width = Math.round(W * DPR); ev.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ectx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    av.width = Math.ceil(W / AS); av.height = Math.ceil(H / AS); actx.setTransform(1 / AS, 0, 0, 1 / AS, 0, 0); ambI = -1;
     const portrait = W / H < 0.9;
     // visible region of the clip we want to guarantee
     const vx = portrait ? 0.84 : 1.0, vy = portrait ? 0.80 : 0.86;
@@ -414,28 +460,36 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     rect = { x: Math.max(x, (W - dw) / 2 > 0 ? Math.min(x, W - dw) : (W - dw) / 2), y: dy, w: dw, h: dh };
     sideFade = null;
     if (!portrait) {
-      const g = ctx.createLinearGradient(0, 0, W, 0);
+      const g = actx.createLinearGradient(0, 0, W, 0);
       const l = Math.max(rect.x / W, 0), r = Math.min((rect.x + dw) / W, 1);
       g.addColorStop(0, 'rgba(27,8,2,0.7)'); g.addColorStop(l, 'rgba(27,8,2,0.15)');
       g.addColorStop(r, 'rgba(27,8,2,0.15)'); g.addColorStop(1, 'rgba(27,8,2,0.7)');
       sideFade = g;
     }
-    lastDrawn = -1;
+    dirty = true;
     initEmbers();
   }
 
-  function drawFrame(i) {
+  // pos is fractional: frame i plus a cross-fade into i+1, so the clip moves continuously between frames
+  function drawFrame(pos) {
+    const i = Math.min(Math.floor(pos), N - 1), t = pos - i;
     const f = nearest(i); if (!f) return;
-    // ambient: same frame, blurred by down/up-scaling, darkened
-    mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
-    tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
-    const cs = Math.max(W / tiny.width, H / tiny.height) * 1.08;
-    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low';
-    ctx.drawImage(tiny, (W - tiny.width * cs) / 2, (H - tiny.height * cs) / 2, tiny.width * cs, tiny.height * cs);
-    ctx.fillStyle = 'rgba(27,8,2,0.58)'; ctx.fillRect(0, 0, W, H);
-    if (sideFade) { ctx.fillStyle = sideFade; ctx.fillRect(0, 0, W, H); }
+    const g = blendOn && t > 0.02 && i + 1 < N ? frames[i + 1] : null;
+    // ambient: same frame, blurred by down/up-scaling, darkened (only rebuilt when the base frame changes)
+    if (ambI !== i) {
+      ambI = frames[i] ? i : -1;
+      mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
+      tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
+      const cs = Math.max(W / tiny.width, H / tiny.height) * 1.08;
+      actx.imageSmoothingEnabled = true; actx.imageSmoothingQuality = 'low';
+      actx.drawImage(tiny, (W - tiny.width * cs) / 2, (H - tiny.height * cs) / 2, tiny.width * cs, tiny.height * cs);
+      actx.fillStyle = 'rgba(27,8,2,0.58)'; actx.fillRect(0, 0, W, H);
+      if (sideFade) { actx.fillStyle = sideFade; actx.fillRect(0, 0, W, H); }
+    }
+    ctx.clearRect(0, 0, W, H);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(f, rect.x, rect.y, rect.w, rect.h);
+    if (g) { ctx.globalAlpha = t; ctx.drawImage(g, rect.x, rect.y, rect.w, rect.h); ctx.globalAlpha = 1; }
   }
 
   // ---- Embers (light, procedural)
@@ -478,8 +532,13 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
       const k = reduce ? 1 : 1 - Math.pow(0.85, dt * 60);
       shown += (p - shown) * k;
       if (Math.abs(p - shown) < 0.0005) shown = p;
-      const idx = Math.round(shown * (N - 1));
-      if (idx !== lastDrawn) { drawFrame(idx); if (nearest(idx)) lastDrawn = frames[idx] ? idx : -1; }
+      const pos = shown * (N - 1);
+      if (dirty || Math.abs(pos - lastPos) > 0.01) {
+        if (!dirty) { ema += (dt - ema) * 0.05; if (ema > 1 / 45) blendOn = false; else if (ema < 1 / 55) blendOn = true; }
+        drawFrame(pos); lastPos = pos;
+        const i = Math.floor(pos);
+        dirty = !frames[i] || (pos - i > 0.02 && i + 1 < N && !frames[i + 1]);
+      }
       title.style.transform = `translate3d(0,${(-shown * 7).toFixed(2)}vh,0)`;
       eater.style.transform = `translate3d(0,${(-shown * 12).toFixed(2)}vh,0)`;
       hint.style.opacity = shown > 0.04 ? 0 : 1;
@@ -522,6 +581,22 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
         const pu = f.querySelector('.pupils'); if (pu) pu.style.transform = `translate(${(dx / d * 4).toFixed(2)}px,${(dy / d * 2.5).toFixed(2)}px)`; }); }); }, { passive: true });
   }
   if (!reduce) setInterval(() => { flames.forEach(f => { f.classList.add('blink'); setTimeout(() => f.classList.remove('blink'), 200); }); }, 3800);
+
+  // ---- Pedir: FoodBooking (el sistema que ya usa La Jarana) dentro de una ventana; sin JS, el enlace abre pestaña nueva
+  const dlg = document.getElementById('pedidoDlg');
+  if (dlg && dlg.showModal) {
+    const ifr = dlg.querySelector('iframe'), fr = dlg.querySelector('.om-frame');
+    ifr.addEventListener('load', () => { if (ifr.src) fr.classList.add('ok'); });
+    const close = () => dlg.close();
+    document.querySelectorAll('[data-pedir]').forEach(a => a.addEventListener('click', ev => {
+      ev.preventDefault();
+      if (!ifr.src) ifr.src = ifr.dataset.src;
+      dlg.showModal(); document.documentElement.style.overflow = 'hidden';
+    }));
+    dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
+    dlg.querySelector('[data-cerrar]').addEventListener('click', close);
+    dlg.addEventListener('click', ev => { if (ev.target === dlg) close(); });
+  }
 
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
   resize();
