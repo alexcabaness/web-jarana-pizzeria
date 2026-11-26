@@ -49,7 +49,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
 
 /* Hero */
-.hero{position:relative;height:340vh}
+.hero{position:relative;height:250vh}
 .stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:var(--brown)}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #embers{pointer-events:none}
@@ -396,7 +396,9 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   const slow = conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || '');
   const portrait0 = innerWidth / innerHeight < 0.9;
   const needPx = Math.min(innerWidth * 1116 / ((portrait0 ? 0.84 : 1) * 812), innerHeight / (portrait0 ? 0.80 : 0.86)) * Math.min(devicePixelRatio || 1, 2);
-  const SET = slow ? ['f/', 720, 990] : (needPx > 1250 && (navigator.deviceMemory || 8) >= 8) ? ['x/', 1218, 1674] : ['h/', 812, 1116];
+  // phones/tablets never get x/: decoded frames are big and mobile browsers reload the tab when memory runs out
+  const touch = matchMedia('(pointer: coarse)').matches;
+  const SET = slow ? ['f/', 720, 990] : (!touch && needPx > 1250 && (navigator.deviceMemory || 8) >= 8) ? ['x/', 1218, 1674] : ['h/', 812, 1116];
   const DIR = SET[0];
   const N = 145, SRC = i => DIR + String(i).padStart(3, '0') + '.webp';
   const FW = SET[1], FH = SET[2];
@@ -427,23 +429,54 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   }
 
   const frames = new Array(N).fill(null);
+  let lastPump = -1;
   let blendOn = true, ema = 1 / 60; // the cross-fade switches itself off on devices that can't hold ~50 fps
   let W = 0, H = 0, DPR = 1, rect = null, dirty = true, lastPos = -1, ambI = -1, sideFade = null;
 
-  // ---- Loading: frame 0 first, then coarse-to-fine so scrubbing works early
+  // ---- Loading. Every frame is downloaded once (compressed, a few MB in total), but only a window of frames
+  // around the scroll position is kept decoded. Holding all 145 decoded frames needs 0.4-1.2 GB, which makes
+  // mobile browsers reload the page mid-scroll. Desktops with plenty of memory keep everything decoded.
+  const CAP = touch ? 28 : ((navigator.deviceMemory || 8) >= 8 ? N : 60);
+  const blobs = new Array(N).fill(null), pending = new Set();
+  const canBmp = 'createImageBitmap' in window;
   const order = [], seen = new Set();
   [0, N - 1].concat([16, 8, 4, 2, 1].flatMap(s => Array.from({ length: Math.ceil(N / s) }, (_, k) => k * s)))
     .forEach(i => { if (i < N && !seen.has(i)) { seen.add(i); order.push(i); } });
-  let cursor = 0;
-  function loadNext() {
+  let cursor = 0, decoded = 0;
+  function fetchNext() {
     if (cursor >= order.length) return;
     const i = order[cursor++];
-    const img = new Image(); img.decoding = 'async'; img.src = SRC(i);
-    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) { dirty = true; ambI = -1; } loadNext(); };
-    img.decode().then(() => ('createImageBitmap' in window ? createImageBitmap(img) : img))
-      .then(done, () => done(img.complete ? img : null));
+    fetch(SRC(i)).then(r => r.ok ? r.blob() : null).catch(() => null)
+      .then(b => { blobs[i] = b; pump(); fetchNext(); });
   }
-  for (let k = 0; k < 6; k++) loadNext();
+  function decode(i) {
+    pending.add(i);
+    const fin = bmp => { pending.delete(i); if (bmp) { frames[i] = bmp; decoded++; trim(); }
+      if (Math.abs(i - target()) < 3 || i === 0) { dirty = true; ambI = -1; } pump(); };
+    if (canBmp) createImageBitmap(blobs[i]).then(fin, () => fin(null));
+    else { const img = new Image(); img.onload = () => fin(img); img.onerror = () => fin(null); img.src = URL.createObjectURL(blobs[i]); }
+  }
+  // free the decoded frames farthest from where the viewer is
+  function trim() {
+    if (decoded <= CAP) return;
+    const t = target();
+    const far = frames.map((f, i) => f && i !== 0 ? i : -1).filter(i => i >= 0).sort((a, b) => Math.abs(b - t) - Math.abs(a - t));
+    while (decoded > CAP && far.length) { const i = far.shift(); if (Math.abs(i - t) < 6) break;
+      if (frames[i].close) frames[i].close(); frames[i] = null; decoded--; }
+  }
+  // decode what is closest to the current position first (ahead a little more than behind)
+  function pump() {
+    if (pending.size >= 2) return;
+    const t = target();
+    for (let d = 0; d < N && pending.size < 2; d++) {
+      for (const i of [t + d, t - d]) {
+        if (i < 0 || i >= N || frames[i] || pending.has(i) || !blobs[i]) continue;
+        if (d > CAP / 2 - 2 && CAP < N) return;
+        decode(i); if (pending.size >= 2) return;
+      }
+    }
+  }
+  for (let k = 0; k < 6; k++) fetchNext();
 
   function nearest(i) {
     if (frames[i]) return frames[i];
@@ -456,7 +489,11 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 
   // ---- Layout: keep the pizza + explosion in view on any screen; the rest is ambient light
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    // mobile browsers fire resize when the address bar shows/hides; the stage (100lvh) doesn't change then,
+    // so skip reallocating the canvases, which would blank them and stutter the scroll
+    const nd = Math.min(window.devicePixelRatio || 1, 2);
+    if (rect && cv.clientWidth === W && cv.clientHeight === H && nd === DPR) return;
+    DPR = nd;
     W = cv.clientWidth; H = cv.clientHeight;
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
     ev.width = Math.round(W * DPR); ev.height = Math.round(H * DPR);
@@ -542,6 +579,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
       shown += (p - shown) * k;
       if (Math.abs(p - shown) < 0.0005) shown = p;
       const pos = shown * (N - 1);
+      if (Math.round(pos) !== lastPump) { lastPump = Math.round(pos); pump(); }
       if (dirty || Math.abs(pos - lastPos) > 0.01) {
         if (!dirty) { ema += (dt - ema) * 0.05; if (ema > 1 / 45) blendOn = false; else if (ema < 1 / 55) blendOn = true; }
         drawFrame(pos); lastPos = pos;
