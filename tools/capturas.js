@@ -12,7 +12,7 @@ for(const [name,vp] of [['m',{width:390,height:844}],['d',{width:1440,height:900
  await p.screenshot({path:`${out}/${name}_hero.png`});
  const H=await p.evaluate(()=>document.body.scrollHeight);
  for(let y=0;y<H;y+=300){await p.evaluate(y=>scrollTo(0,y),y);await p.waitForTimeout(40);}
- for(const sel of ['#carta','.feat','#pizzas','#porciones','#salsas','#postres','#club','.rewards','#pedir']){
+ for(const sel of ['#carta','.feat','#pizzas','#porciones','#salsas','#postres','#pedir']){
    await p.evaluate(s=>{const el=document.querySelector(s);scrollTo(0,el.getBoundingClientRect().top+scrollY-(s.startsWith('#p')&&s!='#pedir'||s=='#salsas'||s=='#postres'?120:0))},sel);await p.waitForTimeout(900);
    await p.screenshot({path:`${out}/${name}_${sel.replace(/[#.]/g,'')}.png`});}
  console.log(name,H,errs);}

@@ -78,6 +78,20 @@ a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
 @keyframes bob{50%{transform:translateY(4px)}}
 .bar{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--lime);opacity:.9}
 
+
+/* Monigote comiendo pizza: discreto en móvil, rellena el hueco izquierdo en escritorio */
+.eater{position:absolute;z-index:2;pointer-events:none;right:max(14px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 74px);width:74px;
+  opacity:0;animation:fade .8s .9s forwards;will-change:transform}
+.m-eat{animation:sway 4.6s ease-in-out infinite;transform-origin:45% 95%}
+.m-eat .slice{transform-box:view-box;transform-origin:230px 210px;animation:bite 2.6s cubic-bezier(.5,0,.3,1) infinite}
+.m-eat .chew{transform-box:fill-box;transform-origin:50% 0;animation:chew 2.6s ease-in-out infinite}
+.m-eat .crumbs{animation:crumbs 2.6s ease-in infinite}
+@keyframes bite{0%,55%,100%{transform:none}68%{transform:translate(-10px,-3px) rotate(-4deg)}78%{transform:translate(2px,1px)}}
+@keyframes chew{0%,60%,100%{transform:scaleY(1)}66%{transform:scaleY(1.25)}74%{transform:scaleY(.35)}82%{transform:scaleY(.9)}90%{transform:scaleY(.4)}}
+@keyframes crumbs{0%,70%{transform:translateY(0);opacity:0}74%{opacity:1}100%{transform:translateY(22px);opacity:0}}
+@media (min-width:900px){
+  .eater{right:auto;top:auto;left:max(6vw,env(safe-area-inset-left,0px));bottom:calc(10vh + min(8vw,128px) + 90px);width:clamp(220px,22vw,380px)}
+}
 @media (min-width:900px){
   .title{bottom:10vh;padding-left:max(5vw,env(safe-area-inset-left,0px))}
   .title h1 img{width:min(52vw,820px)}
@@ -103,7 +117,9 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 .flame{display:block;width:100%;height:auto;overflow:visible}
 .m-intro{animation:sway 4.2s ease-in-out infinite;transform-origin:50% 95%}
 .flame .pupils{transition:transform .25s ease-out}
-.flame.blink .pupils{transform:scaleY(.1)!important;transform-origin:center 164px;transform-box:view-box}
+.flame .blinker{transform-box:fill-box;transform-origin:50% 50%}
+.flame.blink .blinker{animation:blink .18s ease-in-out}
+@keyframes blink{50%{transform:scaleY(.08)}}
 @keyframes sway{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-8px)}}
 .bubble{position:absolute;left:-14%;top:4%;z-index:1;background:var(--cream);color:var(--brown);font-family:var(--display);font-size:clamp(1rem,4.4vw,1.35rem);line-height:1.05;padding:12px 16px;border-radius:18px 18px 18px 4px;border:3px solid #120502;transform:rotate(-6deg);animation:pop .5s 1.2s both cubic-bezier(.3,1.6,.5,1)}
 @keyframes pop{from{transform:rotate(-6deg) scale(.4);opacity:0}}
@@ -119,7 +135,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 /* featured */
 .feat{padding-block:16vh 10vh}
 .sec-h{margin-bottom:36px}
-.sec-h h2,.club h2,.order h2{font-size:clamp(2.6rem,10vw,5.6rem);line-height:.92;margin-top:16px;color:var(--cream)}
+.sec-h h2,.order h2{font-size:clamp(2.6rem,10vw,5.6rem);line-height:.92;margin-top:16px;color:var(--cream)}
 .cards{display:grid;grid-auto-flow:column;grid-auto-columns:82%;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));padding-bottom:8px;scrollbar-width:none}
 .cards::-webkit-scrollbar{display:none}
 .card{scroll-snap-align:start;background:var(--brown-2);border:1px solid rgba(251,243,230,.08);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
@@ -168,29 +184,6 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 @media (min-width:1100px){.list.three{grid-template-columns:repeat(3,1fr)}}
 .note{margin:48px 0 0;color:var(--muted);font-size:.85rem;max-width:60ch}
 
-/* club */
-.club{background:var(--lime);color:var(--brown);padding-block:14vh 12vh;position:relative;overflow:hidden;border-radius:36px 36px 0 0}
-.club h2{color:var(--brown)}
-.club-in{display:grid;gap:20px;align-items:center}
-.club-t p{font-size:1.1rem;line-height:1.55;max-width:42ch;margin:18px 0 26px}
-.rate{display:inline-flex;align-items:center;gap:14px;background:var(--brown);color:var(--lime);font-family:var(--display);font-size:clamp(1.5rem,6vw,2.2rem);padding:14px 24px;border-radius:999px}
-.rate em{font-style:normal;color:var(--cream)}
-.club-m{width:min(60vw,320px);justify-self:center}
-.m-club{animation:hop 2.6s cubic-bezier(.5,0,.5,1) infinite;transform-origin:50% 100%}
-@keyframes hop{0%,60%,100%{transform:translateY(0) scale(1,1)}70%{transform:translateY(0) scale(1.08,.92)}82%{transform:translateY(-26px) scale(.96,1.05)}92%{transform:translateY(0) scale(1.04,.96)}}
-@media (min-width:900px){.club-in{grid-template-columns:1.4fr 1fr}.club-m{width:min(26vw,360px)}}
-.rewards{display:grid;gap:14px;margin-top:56px}
-@media (min-width:700px){.rewards{grid-template-columns:1fr 1fr}}
-@media (min-width:1100px){.rewards{grid-template-columns:repeat(4,1fr)}}
-.rg{background:var(--brown);color:var(--cream);border-radius:22px;padding:22px 20px}
-.rg h4{font-size:1.5rem;color:var(--lime);margin-bottom:8px}
-.rg ul{list-style:none;margin:0;padding:0}
-.rg li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(251,243,230,.1);font-size:.9rem}
-.rg li:last-child{border-bottom:0}
-.rg b{font-weight:800;color:var(--lime);white-space:nowrap;font-variant-numeric:tabular-nums}
-.rg b::after{content:" jt";font-weight:600;font-size:.72em;color:var(--muted)}
-.club-f{margin:18px 0 0;font-size:.82rem;font-weight:600;opacity:.75}
-
 /* order + footer */
 .order{padding-block:16vh 14vh;text-align:center;background:radial-gradient(70% 60% at 50% 60%,rgba(255,138,61,.16),transparent 70%),var(--brown)}
 .order-in{display:grid;justify-items:center;gap:18px}
@@ -204,10 +197,32 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 .foot small{color:rgba(201,184,166,.55);font-size:.75rem}
 .reveal{transition-delay:var(--d,0ms)}
 @media (prefers-reduced-motion:reduce){
-  .m-intro,.m-club,.m-order,.mq,.bubble{animation:none}
+  .m-intro,.m-order,.mq,.bubble,.m-eat,.m-eat .slice,.m-eat .chew,.m-eat .crumbs{animation:none}
   .card:hover .ph img{transform:none}
 }
 
+
+/* Pedido online (FoodBooking) en ventana */
+.order-modal{padding:0;border:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%;color:var(--cream)}
+.order-modal::backdrop{background:rgba(27,8,2,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.order-modal[open]{display:flex;align-items:center;justify-content:center}
+.om-box{display:flex;flex-direction:column;width:min(1100px,calc(100% - 24px));height:min(88vh,900px);height:min(88dvh,900px);background:var(--brown);border:2px solid rgba(204,255,107,.28);border-radius:24px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.5);animation:omIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes omIn{from{opacity:0;transform:translateY(24px) scale(.98)}}
+.om-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px 12px 18px;border-bottom:1px solid rgba(251,243,230,.1)}
+.om-h p{margin:2px 0 0;font-family:var(--display);font-size:1.3rem}
+.om-h .lbl{font-size:.62rem}
+.om-act{display:flex;gap:8px}
+.om-btn{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(251,243,230,.14);background:rgba(251,243,230,.06);color:var(--cream);cursor:pointer}
+.om-btn.lime{background:var(--lime);color:var(--brown);border-color:var(--lime)}
+.om-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.om-frame{position:relative;flex:1;min-height:0;background:#fff}
+.om-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.om-load{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:14px;background:var(--brown);color:var(--muted);font-weight:600;transition:opacity .4s}
+.om-load .flame{width:70px;animation:sway 1.6s ease-in-out infinite;transform-origin:50% 95%}
+.om-frame.ok .om-load{opacity:0;pointer-events:none}
+.om-f{margin:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.78rem;color:var(--muted);text-align:center;border-top:1px solid rgba(251,243,230,.1)}
+.om-f a{color:var(--lime)}
+@media (max-width:600px){.om-box{width:100%;height:100%;border-radius:0;border:0}}
 .reveal{transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);transition-delay:var(--d,0ms)}
 .reveal.pre{opacity:0;transform:translateY(40px)}
 
@@ -224,19 +239,41 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   <a class="brand" href="#inicio" aria-label="La Jarana, inicio"><img src="assets/logo.png" alt="La Jarana" width="1000" height="155"></a>
   <nav class="nav" aria-label="Principal">
     <a href="#carta">Carta</a>
-    <a class="hide-s" href="#club">Club Jarana</a>
     <a class="hide-s" href="#contacto">Contacto</a>
-    <a class="cta" href="#pedir">Pedir</a>
+    <a class="cta" href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener" data-pedir>Pedir</a>
   </nav>
 </header>
 
 <main>
   <section class="hero" id="inicio" aria-label="La Jarana te llama">
     <div class="stage">
+      <canvas id="amb" aria-hidden="true"></canvas>
       <canvas id="frame" aria-hidden="true"></canvas>
       <canvas id="embers" aria-hidden="true"></canvas>
       <div class="vig"></div>
       <div class="grain"></div>
+      <div class="eater" id="eater"><svg class="flame m-eat" viewBox="0 0 260 260" aria-hidden="true">
+<g fill="none" stroke="#120502" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path fill="#fff" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/>
+<path d="M60 134 C68 124 84 122 96 128"/>
+<path d="M126 128 C134 118 148 114 162 120 C166 122 168 126 166 130"/>
+<path fill="#fff" d="M60 160 C70 156 92 156 104 158 C104 172 96 180 84 180 C70 180 62 172 60 160 Z"/>
+<path fill="#fff" d="M120 156 C132 152 156 152 170 154 C170 170 160 178 146 178 C132 178 122 170 120 156 Z"/>
+<path d="M58 160 L106 157 M118 156 L172 153" stroke-width="8"/>
+<g class="chew"><path fill="#5a1606" d="M108 200 C116 192 138 192 146 200 C146 214 136 220 127 220 C118 220 108 214 108 200 Z"/></g>
+</g>
+<g class="blinker"><g class="pupils"><circle cx="90" cy="168" r="8" fill="#120502"/><circle cx="156" cy="165" r="8" fill="#120502"/>
+<circle cx="92.5" cy="165.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="162.5" r="2.2" fill="#fff"/></g></g>
+<g class="slice" stroke="#120502" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+<path fill="#f7c55a" d="M134 206 L236 176 C244 196 242 222 230 240 Z"/>
+<path fill="#d98a3a" d="M236 176 C248 198 246 226 230 240 L220 232 C230 218 232 198 226 182 Z"/>
+<path fill="#6b2410" stroke="none" d="M150 204 C170 200 190 196 210 192 C205 200 198 206 190 206 C186 214 176 214 172 208 C164 212 156 210 150 204 Z" opacity=".85"/>
+<circle cx="196" cy="214" r="6" fill="#7a3a1c" stroke="none"/><circle cx="176" cy="222" r="5" fill="#7a3a1c" stroke="none"/><circle cx="212" cy="224" r="4.5" fill="#7a3a1c" stroke="none"/>
+<path fill="#fff" d="M182 236 C176 226 186 216 196 222 C204 228 200 240 190 242 C186 242 184 240 182 236 Z"/>
+<path fill="#fff" d="M186 178 C182 168 194 160 202 168 C208 174 204 186 194 186 C190 186 188 182 186 178 Z"/>
+</g>
+<g class="crumbs" fill="#d98a3a"><circle cx="130" cy="230" r="3"/><circle cx="140" cy="236" r="2.4"/><circle cx="122" cy="238" r="2"/></g>
+</svg></div>
       <div class="title" id="title">
         <h1><span class="mask"><span class="w"><img src="assets/logo.png" alt="La Jarana" width="1000" height="155"></span></span></h1>
         <p class="sub">// Te llama <span>· Pizza barbacoa</span></p>
@@ -267,11 +304,11 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 <path d="M112 206 C126 210 142 206 152 194"/>
 <path d="M150 190 C154 194 156 198 154 202" stroke-width="5"/>
 </g>
-<g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
-<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></svg>
+<g class="blinker"><g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
+<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></g></svg>
     </div>
   </div>
-  <div class="marq" aria-hidden="true"><div class="mq"><span>Pizzas</span><i aria-hidden="true">✺</i><span>Porciones</span><i aria-hidden="true">✺</i><span>Entrantes</span><i aria-hidden="true">✺</i><span>Postres</span><i aria-hidden="true">✺</i><span>Barbacoa</span><i aria-hidden="true">✺</i><span>Club Jarana</span><i aria-hidden="true">✺</i><span>Pizzas</span><i aria-hidden="true">✺</i><span>Porciones</span><i aria-hidden="true">✺</i><span>Entrantes</span><i aria-hidden="true">✺</i><span>Postres</span><i aria-hidden="true">✺</i><span>Barbacoa</span><i aria-hidden="true">✺</i><span>Club Jarana</span><i aria-hidden="true">✺</i></div></div>
+  <div class="marq" aria-hidden="true"><div class="mq"><span>Pizzas</span><i aria-hidden="true">✺</i><span>Porciones</span><i aria-hidden="true">✺</i><span>Entrantes</span><i aria-hidden="true">✺</i><span>Salsas</span><i aria-hidden="true">✺</i><span>Bebidas</span><i aria-hidden="true">✺</i><span>Postres</span><i aria-hidden="true">✺</i><span>Pizzas</span><i aria-hidden="true">✺</i><span>Porciones</span><i aria-hidden="true">✺</i><span>Entrantes</span><i aria-hidden="true">✺</i><span>Salsas</span><i aria-hidden="true">✺</i><span>Bebidas</span><i aria-hidden="true">✺</i><span>Postres</span><i aria-hidden="true">✺</i></div></div>
 </section>
 
 <section class="feat" aria-labelledby="h-feat">
@@ -288,7 +325,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 </section>
 
 <section class="menu" aria-label="Carta completa">
-  <nav class="tabs" aria-label="Secciones de la carta"><div class="tabs-in"><a href="#pizzas" data-k="pizzas">Pizzas</a><a href="#porciones" data-k="porciones">Porciones</a><a href="#entrantes" data-k="entrantes">Entrantes</a><a href="#salsas" data-k="salsas">Salsas</a><a href="#bebidas" data-k="bebidas">Bebidas</a><a href="#postres" data-k="postres">Postres</a><a href="#club" data-k="club" class="club-tab">Club Jarana</a></div></nav>
+  <nav class="tabs" aria-label="Secciones de la carta"><div class="tabs-in"><a href="#pizzas" data-k="pizzas">Pizzas</a><a href="#porciones" data-k="porciones">Porciones</a><a href="#entrantes" data-k="entrantes">Entrantes</a><a href="#salsas" data-k="salsas">Salsas</a><a href="#bebidas" data-k="bebidas">Bebidas</a><a href="#postres" data-k="postres">Postres</a></div></nav>
   <div class="wrap"><section class="cat" id="pizzas" aria-labelledby="h-pizzas">
 <header class="cat-h reveal"><span class="num">01</span><h3 id="h-pizzas">Pizzas</h3><p>Masa fina, borde dorado y queso gratinado.</p></header>
 <div class="reveal"><ul class="list two"><li class="it"><div class="row"><h4>4 Estaciones</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, atún, jamón york, champiñón, anchoas y orégano.</p><p class="al">Gluten, Lácteos, Pescado</p></li><li class="it"><div class="row"><h4>Al gusto<span class="tag">Tú mandas</span></h4><span class="ld" aria-hidden="true"></span><span class="pr">10,95 €</span></div><p class="ing">Tomate, mozzarella y 4 ingredientes a elegir.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Atún</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,50 €</span></div><p class="ing">Tomate, mozzarella, atún, orégano.</p><p class="al">Gluten, Lácteos, Pescado</p></li><li class="it"><div class="row"><h4>B. Paloma</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, bacon, nata, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja</p></li><li class="it"><div class="row"><h4>Bacon</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,50 €</span></div><p class="ing">Tomate, mozzarella, bacon, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Barbacoa<span class="tag">La del vídeo</span></h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, bacon, salsa BBQ y orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza</p></li><li class="it"><div class="row"><h4>Caprichosa</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,90 €</span></div><p class="ing">Tomate, mozzarella, jamón york, tomate natural, queso roquefort, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Carbonara</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, bacon, champiñón, cebolla, nata, pimienta, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja</p></li><li class="it"><div class="row"><h4>Caribeña</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, jamón york, piña, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Diablo</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, salsa roma, pimienta, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza, Huevo</p></li><li class="it"><div class="row"><h4>El Padrino</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, salsa picante, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza</p></li><li class="it"><div class="row"><h4>Especial Quesos</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, cheddar, parmesano, roquefort, emmental, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Génova</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, bacon, champiñón, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Gourmet BBQ</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,95 €</span></div><p class="ing">Tomate, mozzarella, carne, bacon, pollo, salsa BBQ, cebolla, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza, Sulfitos</p></li><li class="it"><div class="row"><h4>Italiana</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,35 €</span></div><p class="ing">Tomate, mozzarella, bacon, cebolla, emmental, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Lolailo</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,40 €</span></div><p class="ing">Nata, mozzarella, jamón york, emmental, queso cremoso, cebolla, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Margarita</h4><span class="ld" aria-hidden="true"></span><span class="pr">7,95 €</span></div><p class="ing">Tomate, mozzarella, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Mejicana</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne picada, salsa picante, cebolla, pimiento verde, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja, Mostaza</p></li><li class="it"><div class="row"><h4>Melosa</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,90 €</span></div><p class="ing">Tomate, mozzarella, bacon, queso fresco, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Mermelada</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,50 €</span></div><p class="ing">Mermelada de tomate, mozzarella, bacon, queso rulo, frutos secos.</p><p class="al">Gluten, Lácteos, Soja, Frutos secos</p></li><li class="it"><div class="row"><h4>Pepperoni</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,95 €</span></div><p class="ing">Tomate, mozzarella, cebolla, pimiento verde, pepperoni, orégano.</p><p class="al">Gluten, Lácteos, Soja, Mostaza, Sulfitos</p></li><li class="it"><div class="row"><h4>Pollo</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, nata, pollo, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Quesos Supreme</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,50 €</span></div><p class="ing">Nata, mozzarella, parmesano, roquefort, queso de rulo, emmental, orégano.</p><p class="al">Gluten, Lácteos, Maíz</p></li><li class="it"><div class="row"><h4>Roma</h4><span class="ld" aria-hidden="true"></span><span class="pr">10,50 €</span></div><p class="ing">Tomate, mozzarella, jamón serrano, tomate natural, queso fresco, albahaca, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>Tejana</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,40 €</span></div><p class="ing">Tomate, mozzarella, bacon, salsa BBQ, nata, cebolla, orégano.</p><p class="al">Gluten, Lácteos, Soja</p></li><li class="it"><div class="row"><h4>Turca</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, carne kebab, salsa blanca, orégano.</p><p class="al">Gluten, Lácteos, Maíz, Soja, Mostaza, Huevo, Apio</p></li><li class="it"><div class="row"><h4>Vegetal</h4><span class="ld" aria-hidden="true"></span><span class="pr">9,95 €</span></div><p class="ing">Tomate, mozzarella, pimiento rojo, pimiento verde, berenjena, calabacín, champiñón, orégano.</p><p class="al">Gluten, Lácteos</p></li><li class="it"><div class="row"><h4>York</h4><span class="ld" aria-hidden="true"></span><span class="pr">8,50 €</span></div><p class="ing">Tomate, mozzarella, jamón york, orégano.</p><p class="al">Gluten, Lácteos</p></li></ul></div></section><section class="cat" id="porciones" aria-labelledby="h-porciones">
@@ -306,30 +343,6 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   </div>
 </section>
 
-<section class="club" id="club" aria-labelledby="h-club">
-  <div class="wrap club-in">
-    <div class="club-t reveal">
-      <span class="lbl dark">// Club Jarana</span>
-      <h2 id="h-club">Juntos hacemos jarana.</h2>
-      <p>Acumula <b>jaranitos</b> con tus pedidos y cámbialos por tus productos favoritos. Cuantos más acumules, más cosas te llevas.</p>
-      <div class="rate"><span>1 €</span><em>=</em><span>1 jaranito</span></div>
-    </div>
-    <div class="club-m reveal" style="--d:120ms"><svg class="flame m-club" viewBox="0 0 220 250" aria-hidden="true"><g class="body" fill="none" stroke="#120502" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-<path fill="#fff" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/>
-<path d="M66 136 C74 128 88 126 98 130"/>
-<path d="M126 128 C134 118 148 114 162 120 C166 122 168 126 166 130"/>
-<path fill="#fff" d="M60 160 C70 156 92 156 104 158 C104 172 96 180 84 180 C70 180 62 172 60 160 Z"/>
-<path fill="#fff" d="M120 156 C132 152 156 152 170 154 C170 170 160 178 146 178 C132 178 122 170 120 156 Z"/>
-<path d="M58 160 L106 157 M118 156 L172 153" stroke-width="8"/>
-<path d="M112 206 C126 210 142 206 152 194"/>
-<path d="M150 190 C154 194 156 198 154 202" stroke-width="5"/>
-</g>
-<g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
-<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></svg></div>
-  </div>
-  <div class="wrap"><div class="rewards"><div class="rg reveal" style="--d:0ms"><h4>Pizzas</h4><ul><li><span>Pizzas de 7,95 €</span><b>310</b></li><li><span>Pizzas de 8,35 a 8,50 €</span><b>330</b></li><li><span>Pizzas de 8,95 a 9,40 €</span><b>360</b></li><li><span>Pizzas de 9,95 €</span><b>390</b></li><li><span>Pizzas de 10,95 €</span><b>430</b></li><li><span>Ingrediente extra</span><b>40</b></li></ul></div><div class="rg reveal" style="--d:80ms"><h4>Porciones</h4><ul><li><span>Porciones de 1,95 €</span><b>80</b></li><li><span>Porciones de 2,10 €</span><b>80</b></li><li><span>Porciones de 2,20 a 2,30 €</span><b>90</b></li><li><span>Porciones de 2,50 a 2,75 €</span><b>100</b></li></ul></div><div class="rg reveal" style="--d:160ms"><h4>Para picar</h4><ul><li><span>Ración de patatas</span><b>100</b></li><li><span>Gringos (6 uds.)</span><b>300</b></li><li><span>Cheese fries</span><b>400</b></li><li><span>Salsa extra</span><b>40</b></li></ul></div><div class="rg reveal" style="--d:240ms"><h4>Dulce y bebida</h4><ul><li><span>Crepe (+ topping)</span><b>120</b></li><li><span>Gofre (+ topping)</span><b>120</b></li><li><span>Coulant</span><b>120</b></li><li><span>Profiteroles</span><b>100</b></li><li><span>Bebida</span><b>60</b></li></ul></div></div><p class="club-f reveal">Jaranitos necesarios para cada recompensa.</p></div>
-</section>
-
 <section class="order" id="pedir" aria-labelledby="h-order">
   <div class="wrap order-in reveal">
     <svg class="flame m-order" viewBox="0 0 220 250" aria-hidden="true"><g class="body" fill="none" stroke="#120502" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
@@ -342,15 +355,30 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 <path d="M112 206 C126 210 142 206 152 194"/>
 <path d="M150 190 C154 194 156 198 154 202" stroke-width="5"/>
 </g>
-<g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
-<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></svg>
+<g class="blinker"><g class="pupils"><circle cx="90" cy="166" r="8" fill="#120502"/><circle cx="156" cy="163" r="8" fill="#120502"/>
+<circle cx="92.5" cy="163.5" r="2.2" fill="#fff"/><circle cx="158.5" cy="160.5" r="2.2" fill="#fff"/></g></g></svg>
     <h2 id="h-order">¿Te llama?</h2>
     <p>Haz tu pedido en un par de toques.</p>
-    <a class="btn big" href="#pedir">Pedir ahora</a>
+    <a class="btn big" href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener" data-pedir>Pedir ahora</a>
   </div>
 </section>
 
 </main>
+<dialog class="order-modal" id="pedidoDlg" aria-labelledby="pedido-t">
+  <div class="om-box">
+    <div class="om-h">
+      <div><span class="lbl">Jarana</span><p id="pedido-t">Haz tu pedido</p></div>
+      <div class="om-act">
+        <a class="om-btn lime" href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener" aria-label="Abrir el pedido en una pestaña nueva" title="Abrir en una pestaña nueva"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        <button class="om-btn" type="button" data-cerrar aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </div>
+    <div class="om-frame"><iframe title="Pedido online de La Jarana" allow="geolocation" data-src="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b"></iframe>
+      <div class="om-load"><svg class="flame" viewBox="0 0 220 250" aria-hidden="true"><path fill="#fff" stroke="#120502" stroke-width="7" stroke-linejoin="round" d="M110 240 C56 240 22 204 24 156 C25 126 36 104 50 88 C50 104 56 116 66 122 C60 92 70 62 94 42 C110 28 118 16 118 4 C140 24 150 52 144 82 C154 72 160 58 158 44 C182 70 196 108 194 150 C192 204 160 240 110 240 Z"/></svg>Cargando la carta…</div>
+    </div>
+    <p class="om-f">Pedidos gestionados por FoodBooking. ¿No carga? <a href="https://www.foodbooking.com/ordering/?restaurant_uid=7d2d0ed9-39f6-4627-8ff7-ba20ef5cc52b" target="_blank" rel="noopener">Ábrelo aquí</a>.</p>
+  </div>
+</dialog>
 <footer class="foot" id="contacto">
   <div class="wrap foot-in">
     <img src="assets/logo.png" alt="La Jarana" width="1000" height="155" class="foot-logo" loading="lazy">
@@ -362,25 +390,45 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
 
 <script>
 (() => {
-  // HD set (full clip resolution) unless the viewer asked to save data or is on a slow connection
+  // Frame set by the pixels the clip will really cover on this screen:
+  // x/ (1218x1674) for large/retina screens, h/ (812x1116) by default, f/ (720x990) when saving data or on 2G/3G
   const conn = navigator.connection || {};
-  const HD = !(conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || ''));
-  const DIR = HD ? 'h/' : 'f/';
+  const slow = conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || '');
+  const portrait0 = innerWidth / innerHeight < 0.9;
+  const needPx = Math.min(innerWidth * 1116 / ((portrait0 ? 0.84 : 1) * 812), innerHeight / (portrait0 ? 0.80 : 0.86)) * Math.min(devicePixelRatio || 1, 2);
+  const SET = slow ? ['f/', 720, 990] : (needPx > 1250 && (navigator.deviceMemory || 8) >= 8) ? ['x/', 1218, 1674] : ['h/', 812, 1116];
+  const DIR = SET[0];
   const N = 145, SRC = i => DIR + String(i).padStart(3, '0') + '.webp';
-  const FW = HD ? 812 : 720, FH = HD ? 1116 : 990;
+  const FW = SET[1], FH = SET[2];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const hero = document.querySelector('.hero');
-  const cv = document.getElementById('frame'), ctx = cv.getContext('2d', { alpha: false });
+  const cv = document.getElementById('frame'), ctx = cv.getContext('2d');
+  // ambient light lives on its own low-res layer (it is a blur anyway), so a scroll step only repaints the clip itself
+  const av = document.getElementById('amb'), actx = av.getContext('2d', { alpha: false }); const AS = 6;
   const ev = document.getElementById('embers'), ectx = ev.getContext('2d');
-  const title = document.getElementById('title'), hint = document.getElementById('hint'), bar = document.getElementById('bar');
+  const eater = document.getElementById('eater'), title = document.getElementById('title'), hint = document.getElementById('hint'), bar = document.getElementById('bar');
   const mid = document.createElement('canvas'); mid.width = 90; mid.height = 124;
   const mctx = mid.getContext('2d');
   const tiny = document.createElement('canvas'); tiny.width = 30; tiny.height = 41;
   const tctx = tiny.getContext('2d');
+  // ambient is eased over time towards the current frame instead of jumping, so the soft edge of the clip doesn't flicker
+  const acc = document.createElement('canvas'); acc.width = 30; acc.height = 41;
+  const accx = acc.getContext('2d', { alpha: false });
+  let ambLeft = 0, ambSnap = true;
+  function paintAmb() {
+    accx.globalAlpha = ambSnap ? 1 : 0.12; ambSnap = false;
+    accx.imageSmoothingEnabled = true; accx.drawImage(tiny, 0, 0); accx.globalAlpha = 1;
+    const cs = Math.max(W / acc.width, H / acc.height) * 1.08;
+    actx.imageSmoothingEnabled = true; actx.imageSmoothingQuality = 'low';
+    actx.drawImage(acc, (W - acc.width * cs) / 2, (H - acc.height * cs) / 2, acc.width * cs, acc.height * cs);
+    actx.fillStyle = 'rgba(27,8,2,0.58)'; actx.fillRect(0, 0, W, H);
+    if (sideFade) { actx.fillStyle = sideFade; actx.fillRect(0, 0, W, H); }
+  }
 
   const frames = new Array(N).fill(null);
-  let W = 0, H = 0, DPR = 1, rect = null, lastDrawn = -1, sideFade = null;
+  let blendOn = true, ema = 1 / 60; // the cross-fade switches itself off on devices that can't hold ~50 fps
+  let W = 0, H = 0, DPR = 1, rect = null, dirty = true, lastPos = -1, ambI = -1, sideFade = null;
 
   // ---- Loading: frame 0 first, then coarse-to-fine so scrubbing works early
   const order = [], seen = new Set();
@@ -391,7 +439,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     if (cursor >= order.length) return;
     const i = order[cursor++];
     const img = new Image(); img.decoding = 'async'; img.src = SRC(i);
-    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) lastDrawn = -1; loadNext(); };
+    const done = bmp => { frames[i] = bmp; if (i === 0 || Math.abs(i - target()) < 3) { dirty = true; ambI = -1; } loadNext(); };
     img.decode().then(() => ('createImageBitmap' in window ? createImageBitmap(img) : img))
       .then(done, () => done(img.complete ? img : null));
   }
@@ -413,6 +461,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
     ev.width = Math.round(W * DPR); ev.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ectx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    av.width = Math.ceil(W / AS); av.height = Math.ceil(H / AS); actx.setTransform(1 / AS, 0, 0, 1 / AS, 0, 0); ambI = -1; ambSnap = true;
     const portrait = W / H < 0.9;
     // visible region of the clip we want to guarantee
     const vx = portrait ? 0.84 : 1.0, vy = portrait ? 0.80 : 0.86;
@@ -424,28 +473,32 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     rect = { x: Math.max(x, (W - dw) / 2 > 0 ? Math.min(x, W - dw) : (W - dw) / 2), y: dy, w: dw, h: dh };
     sideFade = null;
     if (!portrait) {
-      const g = ctx.createLinearGradient(0, 0, W, 0);
+      const g = actx.createLinearGradient(0, 0, W, 0);
       const l = Math.max(rect.x / W, 0), r = Math.min((rect.x + dw) / W, 1);
       g.addColorStop(0, 'rgba(27,8,2,0.7)'); g.addColorStop(l, 'rgba(27,8,2,0.15)');
       g.addColorStop(r, 'rgba(27,8,2,0.15)'); g.addColorStop(1, 'rgba(27,8,2,0.7)');
       sideFade = g;
     }
-    lastDrawn = -1;
+    dirty = true;
     initEmbers();
   }
 
-  function drawFrame(i) {
+  // pos is fractional: frame i plus a cross-fade into i+1, so the clip moves continuously between frames
+  function drawFrame(pos) {
+    const i = Math.min(Math.floor(pos), N - 1), t = pos - i;
     const f = nearest(i); if (!f) return;
-    // ambient: same frame, blurred by down/up-scaling, darkened
-    mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
-    tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
-    const cs = Math.max(W / tiny.width, H / tiny.height) * 1.08;
-    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low';
-    ctx.drawImage(tiny, (W - tiny.width * cs) / 2, (H - tiny.height * cs) / 2, tiny.width * cs, tiny.height * cs);
-    ctx.fillStyle = 'rgba(27,8,2,0.58)'; ctx.fillRect(0, 0, W, H);
-    if (sideFade) { ctx.fillStyle = sideFade; ctx.fillRect(0, 0, W, H); }
+    const g = blendOn && t > 0.02 && i + 1 < N ? frames[i + 1] : null;
+    // ambient: same frame, blurred by down/up-scaling, darkened (only rebuilt when the base frame changes)
+    if (ambI !== i) {
+      ambI = frames[i] ? i : -1;
+      mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
+      tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
+      ambLeft = 40;
+    }
+    ctx.clearRect(0, 0, W, H);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(f, rect.x, rect.y, rect.w, rect.h);
+    if (g) { ctx.globalAlpha = t; ctx.drawImage(g, rect.x, rect.y, rect.w, rect.h); ctx.globalAlpha = 1; }
   }
 
   // ---- Embers (light, procedural)
@@ -488,11 +541,18 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
       const k = reduce ? 1 : 1 - Math.pow(0.85, dt * 60);
       shown += (p - shown) * k;
       if (Math.abs(p - shown) < 0.0005) shown = p;
-      const idx = Math.round(shown * (N - 1));
-      if (idx !== lastDrawn) { drawFrame(idx); if (nearest(idx)) lastDrawn = frames[idx] ? idx : -1; }
+      const pos = shown * (N - 1);
+      if (dirty || Math.abs(pos - lastPos) > 0.01) {
+        if (!dirty) { ema += (dt - ema) * 0.05; if (ema > 1 / 45) blendOn = false; else if (ema < 1 / 55) blendOn = true; }
+        drawFrame(pos); lastPos = pos;
+        const i = Math.floor(pos);
+        dirty = !frames[i] || (pos - i > 0.02 && i + 1 < N && !frames[i + 1]);
+      }
       title.style.transform = `translate3d(0,${(-shown * 7).toFixed(2)}vh,0)`;
+      eater.style.transform = `translate3d(0,${(-shown * 12).toFixed(2)}vh,0)`;
       hint.style.opacity = shown > 0.04 ? 0 : 1;
       bar.style.transform = `scaleX(${shown.toFixed(4)})`;
+      if (ambLeft > 0) { ambLeft--; paintAmb(); }
       if (embers.length) drawEmbers(dt, now / 1000, shown);
     }
     requestAnimationFrame(tick);
@@ -519,7 +579,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   const setOn = k => tabLinks.forEach(a => { const on = a.dataset.k === k; a.classList.toggle('on', on);
     if (on) { a.setAttribute('aria-current', 'true'); tabsIn.scrollTo({ left: a.offsetLeft - 16, behavior: reduce ? 'auto' : 'smooth' }); } else a.removeAttribute('aria-current'); });
   const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) setOn(e.target.id); }), { rootMargin: '-40% 0px -55% 0px' });
-  document.querySelectorAll('.cat, #club').forEach(el => spy.observe(el));
+  document.querySelectorAll('.cat').forEach(el => spy.observe(el));
 
   const flames = [...document.querySelectorAll('.flame')];
   if (!reduce && matchMedia('(pointer:fine)').matches) {
@@ -528,9 +588,25 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
       requestAnimationFrame(() => { pend = false; flames.forEach(f => { const r = f.getBoundingClientRect();
         if (r.bottom < 0 || r.top > innerHeight) return;
         const dx = px - (r.left + r.width * .55), dy = py - (r.top + r.height * .66), d = Math.hypot(dx, dy) || 1;
-        f.querySelector('.pupils').style.transform = `translate(${(dx / d * 4).toFixed(2)}px,${(dy / d * 2.5).toFixed(2)}px)`; }); }); }, { passive: true });
+        const pu = f.querySelector('.pupils'); if (pu) pu.style.transform = `translate(${(dx / d * 4).toFixed(2)}px,${(dy / d * 2.5).toFixed(2)}px)`; }); }); }, { passive: true });
   }
-  if (!reduce) setInterval(() => { flames.forEach(f => { f.classList.add('blink'); setTimeout(() => f.classList.remove('blink'), 140); }); }, 3800);
+  if (!reduce) setInterval(() => { flames.forEach(f => { f.classList.add('blink'); setTimeout(() => f.classList.remove('blink'), 200); }); }, 3800);
+
+  // ---- Pedir: FoodBooking (el sistema que ya usa La Jarana) dentro de una ventana; sin JS, el enlace abre pestaña nueva
+  const dlg = document.getElementById('pedidoDlg');
+  if (dlg && dlg.showModal) {
+    const ifr = dlg.querySelector('iframe'), fr = dlg.querySelector('.om-frame');
+    ifr.addEventListener('load', () => { if (ifr.src) fr.classList.add('ok'); });
+    const close = () => dlg.close();
+    document.querySelectorAll('[data-pedir]').forEach(a => a.addEventListener('click', ev => {
+      ev.preventDefault();
+      if (!ifr.src) ifr.src = ifr.dataset.src;
+      dlg.showModal(); document.documentElement.style.overflow = 'hidden';
+    }));
+    dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
+    dlg.querySelector('[data-cerrar]').addEventListener('click', close);
+    dlg.addEventListener('click', ev => { if (ev.target === dlg) close(); });
+  }
 
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
   resize();
