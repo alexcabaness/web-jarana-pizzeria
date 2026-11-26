@@ -412,6 +412,19 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
   const mctx = mid.getContext('2d');
   const tiny = document.createElement('canvas'); tiny.width = 30; tiny.height = 41;
   const tctx = tiny.getContext('2d');
+  // ambient is eased over time towards the current frame instead of jumping, so the soft edge of the clip doesn't flicker
+  const acc = document.createElement('canvas'); acc.width = 30; acc.height = 41;
+  const accx = acc.getContext('2d', { alpha: false });
+  let ambLeft = 0, ambSnap = true;
+  function paintAmb() {
+    accx.globalAlpha = ambSnap ? 1 : 0.12; ambSnap = false;
+    accx.imageSmoothingEnabled = true; accx.drawImage(tiny, 0, 0); accx.globalAlpha = 1;
+    const cs = Math.max(W / acc.width, H / acc.height) * 1.08;
+    actx.imageSmoothingEnabled = true; actx.imageSmoothingQuality = 'low';
+    actx.drawImage(acc, (W - acc.width * cs) / 2, (H - acc.height * cs) / 2, acc.width * cs, acc.height * cs);
+    actx.fillStyle = 'rgba(27,8,2,0.58)'; actx.fillRect(0, 0, W, H);
+    if (sideFade) { actx.fillStyle = sideFade; actx.fillRect(0, 0, W, H); }
+  }
 
   const frames = new Array(N).fill(null);
   let blendOn = true, ema = 1 / 60; // the cross-fade switches itself off on devices that can't hold ~50 fps
@@ -448,7 +461,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
     ev.width = Math.round(W * DPR); ev.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ectx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    av.width = Math.ceil(W / AS); av.height = Math.ceil(H / AS); actx.setTransform(1 / AS, 0, 0, 1 / AS, 0, 0); ambI = -1;
+    av.width = Math.ceil(W / AS); av.height = Math.ceil(H / AS); actx.setTransform(1 / AS, 0, 0, 1 / AS, 0, 0); ambI = -1; ambSnap = true;
     const portrait = W / H < 0.9;
     // visible region of the clip we want to guarantee
     const vx = portrait ? 0.84 : 1.0, vy = portrait ? 0.80 : 0.86;
@@ -480,11 +493,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
       ambI = frames[i] ? i : -1;
       mctx.imageSmoothingQuality = 'high'; mctx.clearRect(0, 0, mid.width, mid.height); mctx.drawImage(f, 0, 0, mid.width, mid.height);
       tctx.imageSmoothingQuality = 'high'; tctx.clearRect(0, 0, tiny.width, tiny.height); tctx.drawImage(mid, 0, 0, tiny.width, tiny.height);
-      const cs = Math.max(W / tiny.width, H / tiny.height) * 1.08;
-      actx.imageSmoothingEnabled = true; actx.imageSmoothingQuality = 'low';
-      actx.drawImage(tiny, (W - tiny.width * cs) / 2, (H - tiny.height * cs) / 2, tiny.width * cs, tiny.height * cs);
-      actx.fillStyle = 'rgba(27,8,2,0.58)'; actx.fillRect(0, 0, W, H);
-      if (sideFade) { actx.fillStyle = sideFade; actx.fillRect(0, 0, W, H); }
+      ambLeft = 40;
     }
     ctx.clearRect(0, 0, W, H);
     ctx.imageSmoothingQuality = 'high';
@@ -543,6 +552,7 @@ h2,h3,h4{font-family:var(--display);font-weight:400;margin:0}
       eater.style.transform = `translate3d(0,${(-shown * 12).toFixed(2)}vh,0)`;
       hint.style.opacity = shown > 0.04 ? 0 : 1;
       bar.style.transform = `scaleX(${shown.toFixed(4)})`;
+      if (ambLeft > 0) { ambLeft--; paintAmb(); }
       if (embers.length) drawEmbers(dt, now / 1000, shown);
     }
     requestAnimationFrame(tick);
