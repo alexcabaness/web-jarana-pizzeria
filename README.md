@@ -1,11 +1,20 @@
 # La Jarana te llama · nueva web
 
-Prototipo de la nueva web de la pizzería La Jarana.
+**Web publicada:** https://alexcabaness.github.io/web-jarana-pizzeria/
 
-- **Hero:** una pizza barbacoa que explota al hacer scroll. Son 145 fotogramas dibujados en un canvas fijo.
+Nueva web de la pizzería La Jarana te llama ([jaranatellama.es](https://jaranatellama.es), [@la_jarana_te_llama](https://www.instagram.com/la_jarana_te_llama/)). Se abre con una animación a pantalla completa: al hacer scroll, una pizza barbacoa explota. Debajo está la carta completa. Está pensada primero para móvil, pero también funciona bien en escritorio. Usa los colores de la marca (marrón oscuro, verde lima y blanco), la tipografía Sardin y el monigote de la llama.
+
+## Qué incluye
+
+- **Hero:** la explosión se hace con 145 fotogramas que se dibujan en un canvas fijo mientras haces scroll.
   - `h/` es el set HD (812×1116).
   - `f/` es el set ligero, que se usa con ahorro de datos o con 2G/3G.
-- **Carta:** pizzas, porciones, entrantes, salsas, bebidas y postres, más el Club Jarana y el botón de pedir. Los datos salen de la carta actual de jaranatellama.es.
+- **Carta:**
+  - pizzas, porciones, entrantes, salsas, bebidas y postres, con precios y alérgenos;
+  - el Club Jarana (jaranitos);
+  - el botón de pedir.
+
+  Los datos salen de la carta actual de jaranatellama.es.
 
 ## Ver en local
 
