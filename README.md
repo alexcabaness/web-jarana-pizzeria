@@ -6,12 +6,11 @@ Nueva web de la pizzería La Jarana te llama ([jaranatellama.es](https://jaranat
 
 ## Qué incluye
 
-- **Hero:** la explosión se hace con 145 fotogramas que se dibujan en un canvas fijo mientras haces scroll.
+- **Hero:** el monigote de la llama comiéndose una porción (grande a la izquierda en escritorio, pequeño en móvil). La explosión se hace con 145 fotogramas que se dibujan en un canvas fijo mientras haces scroll.
   - `h/` es el set HD (812×1116).
   - `f/` es el set ligero, que se usa con ahorro de datos o con 2G/3G.
 - **Carta:**
   - pizzas, porciones, entrantes, salsas, bebidas y postres, con precios y alérgenos;
-  - el Club Jarana (jaranitos);
   - el botón de pedir.
 
   Los datos salen de la carta actual de jaranatellama.es.
